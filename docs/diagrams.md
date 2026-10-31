@@ -26,44 +26,22 @@ In this public copy, one page name and two internal addresses were replaced with
 Page 8 became the [data model](data-model.md). Pages 7 and 9 became the [workflow](workflow.md) and
 [roles and access](roles-and-access.md).
 
-## The final access controls (page 7)
+## Rendered pages
 
-The final chart has one swimlane per role. In short:
+[![MVP flow (page 2)](images/charts/mvp-flow.webp)](images/charts/mvp-flow.webp)
 
-```mermaid
-flowchart TB
-    subgraph REQ[Requestor]
-        R1[Create request: pick location, add asset or non-asset items]
-        R2[Confirm submission: list locks after this]
-        R3[View requests and approval status]
-        R4[After approval: enter QUEST and IBase numbers]
-        R5[Ask admin to add a missing location]
-    end
-    subgraph ITM[IT Manager]
-        M1[Open approval page] --> M2{Approve list?}
-    end
-    subgraph FIN[Finance Controller]
-        F1[Open approval page] --> F2{Approve list?}
-    end
-    subgraph ADM[Admin]
-        A1[View, add, edit, delete admins]
-        A2[View, add, edit, delete locations]
-        A3[View, add, edit, delete requestors]
-        A4[View, add, edit, delete approvers]
-    end
-    subgraph SYS[System]
-        S1[Look up user from the directory]
-        S2[Save to SharePoint]
-        S3[Send emails at each step]
-        S4[Update list status with QUEST and IBase numbers]
-    end
-    R2 --> S2 --> S3 --> M1
-    M2 -->|yes| F1
-    M2 -->|no| S3
-    F2 -->|yes| R4 --> S4
-    F2 -->|no| S3
-    R5 --> A2
-```
+[![Flow with home page (page 5)](images/charts/home-function-flow.webp)](images/charts/home-function-flow.webp)
+
+[![First ERD (page 6)](images/charts/erd-team-draft.webp)](images/charts/erd-team-draft.webp)
+
+<p align="center"><a href="images/charts/final-flow.webp"><img src="images/charts/final-flow.webp" width="640" alt="Final flow (page 7)"></a></p>
+
+<p align="center"><a href="images/charts/final-admin-access.webp"><img src="images/charts/final-admin-access.webp" width="420" alt="Admin access controls (page 7)"></a></p>
+
+[![Normalised ERD (page 8)](images/charts/erd-normalised.webp)](images/charts/erd-normalised.webp)
+
+These images were rendered from the draw.io file for this repo; open the file itself for the exact
+original layout.
 
 Two ideas in the charts never made it into the app: looking up asset details automatically from the
 internal asset system by scanning a barcode, and updating the asset's status in the hardware ESM after
