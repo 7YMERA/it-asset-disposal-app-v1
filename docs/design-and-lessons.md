@@ -53,3 +53,5 @@ The project ran from January to July 2025, in this order:
 
 - Add an export button on the approver screen, so a case can be saved for auditors (it's still marked "Add export button maybe" in the design).
 - Move the lists to Dataverse to drop the delegation workarounds altogether.
+
+The full redesign is in [it-asset-disposal-app-v2](https://github.com/7YMERA/it-asset-disposal-app-v2).

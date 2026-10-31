@@ -68,6 +68,8 @@ More detail:
 - [Roles and access](docs/roles-and-access.md)
 - [Key formulas](docs/key-formulas.md): the Power Fx behind login, saving a case and approvals
 - [Design and lessons learned](docs/design-and-lessons.md)
+- [Project timeline](docs/timeline.md): dated milestones from my SIP logbook
+- [What the live lists show](docs/live-data-review.md): how the final version was used, and its data problems
 
 ## What's in this repo
 
@@ -96,11 +98,18 @@ the final version described in my internship report:
   the case status was finished later in SLB's environment.
 - The **QUEST/IBase recording and "Disposed" confirmation** steps were also added later and are not in
   this copy.
+- [What the live lists show](docs/live-data-review.md) confirms the final version did reach every status,
+  including approval and rejection at both levels and *Disposed*, and lists the data problems that v2 fixes.
 - The **email notifications** were Power Automate flows, which live outside the app file, so they are
   described in [docs/workflow.md](docs/workflow.md) rather than included as code.
 
 The app won't run as-is: it was built against SLB's SharePoint lists. To try it, create lists that match
 [sample-data/](sample-data/) in your own SharePoint site and point the app's data sources at them.
+
+## What came next
+
+[it-asset-disposal-app-v2](https://github.com/7YMERA/it-asset-disposal-app-v2) is a redesign of this app
+outside SLB, built from the lessons here. This repo stays as the record of the original.
 
 ## Built with
 
