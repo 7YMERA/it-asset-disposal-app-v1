@@ -1,0 +1,309 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+ComponentDefinitions:
+  NavAdminView:
+    DefinitionType: CanvasComponent
+    AccessAppScope: true
+    CustomProperties:
+      Home:
+        PropertyKind: Output
+        DisplayName: Home
+        Description: A custom property
+        DataType: Screen
+      NavigationItems:
+        PropertyKind: Input
+        DisplayName: Navigation Items
+        Description: A custom property
+        DataType: Table
+        Default: |-
+          =With(
+              {
+                  MenuItems: Table(
+                      {
+                          MenuText: "Set Requestor",
+                          MenuIcon: "PeopleAdd",
+                          ScreenToGoTo: 'ADMIN Set Requestor'
+
+                      },
+                      {
+                          MenuText: "Set Approver",
+                          MenuIcon: "Checkmark",
+                          ScreenToGoTo: 'ADMIN Set Approver'
+
+                      },
+                      {
+                          MenuText: "Set Admin",
+                          MenuIcon: "Warning",
+                          ScreenToGoTo: 'ADMIN Set Admin'
+
+                      },
+                      {
+                          MenuText: "Set Location",
+                          MenuIcon: "Globe",
+                          ScreenToGoTo: 'ADMIN Set Location'
+                      },
+                      {
+                          MenuText: "Logout",
+                          MenuIcon: "ArrowExit",
+                          ScreenToGoTo: 'Login'
+                      }
+                  )
+              },
+              MenuItems
+          )
+      UserRole:
+        PropertyKind: Input
+        DisplayName: User Role
+        Description: A custom property
+        DataType: Text
+        Default: =varUserRole
+    Properties:
+      Height: =App.DesignHeight
+      Home: =App.ActiveScreen
+      Width: =250
+    Children:
+      - MainNavContainer_4:
+          Control: GroupContainer@1.3.0
+          Variant: AutoLayout
+          Properties:
+            DropShadow: =DropShadow.None
+            Fill: =RGBA(0, 20, 220, 1)
+            Height: =1080
+            LayoutAlignItems: =LayoutAlignItems.Stretch
+            LayoutDirection: =LayoutDirection.Vertical
+            RadiusBottomLeft: =0
+            RadiusBottomRight: =0
+            RadiusTopLeft: =0
+            RadiusTopRight: =0
+            Width: =250
+          Children:
+            - Logo_4:
+                Control: Image@2.2.3
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Image: =SLB_Logo_White_General
+            - NavContainer_4:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  DropShadow: =DropShadow.None
+                  FillPortions: =0
+                  Height: |-
+                    =
+                    750
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutJustifyContent: =LayoutJustifyContent.Center
+                  LayoutMinHeight: =0
+                  Width: =Parent.Width
+                Children:
+                  - NavGallery1_3:
+                      Control: Gallery@2.15.0
+                      Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                      Properties:
+                        AlignInContainer: =AlignInContainer.Center
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        FillPortions: =0
+                        Height: =520
+                        Items: =NavAdminView.NavigationItems
+                        LayoutMinHeight: =0
+                        LayoutMinWidth: =0
+                        OnSelect: |+
+                          =Set(varSelectedMenu, ThisItem.MenuText);
+                          Navigate(ThisItem.ScreenToGoTo, ScreenTransition.None)
+                        ShowScrollbar: =false
+                        Width: =Parent.Width
+                        X: =40
+                        Y: =40
+                      Children:
+                        - Rectangle2_3:
+                            Control: Rectangle@2.3.0
+                            Properties:
+                              BorderColor: =RGBA(0, 18, 107, 1)
+                              Fill: =RGBA(255, 255, 255, 1)
+                              Height: =91
+                              OnSelect: =Select(Parent)
+                              Visible: |+
+                                =ThisItem.ScreenToGoTo = App.ActiveScreen
+                              Width: =6
+                              Y: =6
+                        - Icon1_3:
+                            Control: Icon@0.0.7
+                            Properties:
+                              Height: =55
+                              Icon: =ThisItem.MenuIcon
+                              IconColor: =Color.White
+                              Width: =56
+                              X: =24
+                              Y: =24
+                        - Title3_3:
+                            Control: Label@2.5.1
+                            Properties:
+                              BorderColor: =RGBA(0, 0, 0, 1)
+                              Color: =RGBA(255, 255, 255, 1)
+                              Font: =Font.'Open Sans'
+                              FontWeight: =If(ThisItem.ScreenToGoTo = App.ActiveScreen, FontWeight.Semibold, FontWeight.Normal)
+                              Height: =25
+                              OnSelect: =Select(Parent)
+                              PaddingBottom: =0
+                              PaddingLeft: =0
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =14
+                              Text: =ThisItem.MenuText
+                              VerticalAlign: =VerticalAlign.Top
+                              Width: =134
+                              X: =101
+                              Y: =39
+                        - Button2_4:
+                            Control: Classic/Button@2.2.0
+                            Properties:
+                              AutoDisableOnSelect: =false
+                              BorderColor: =ColorFade(Self.Fill, -15%)
+                              Color: =RGBA(0, 0, 0, 0)
+                              DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                              Fill: =RGBA(0, 0, 0, 0)
+                              Font: =Font.'Open Sans'
+                              Height: =57
+                              HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                              HoverColor: =RGBA(255, 255, 255, 1)
+                              HoverFill: =
+                              OnSelect: =Select(Parent)
+                              PressedBorderColor: =
+                              PressedColor: =
+                              PressedFill: =
+                              Text: =
+                              Width: =245
+                              Y: =22
+            - ProfileContainer_4:
+                Control: GroupContainer@1.3.0
+                Variant: AutoLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  LayoutDirection: =LayoutDirection.Vertical
+                  RadiusBottomLeft: =0
+                  RadiusBottomRight: =0
+                  RadiusTopLeft: =0
+                  RadiusTopRight: =0
+                Children:
+                  - ProfileWithGalleryCont_4:
+                      Control: GroupContainer@1.3.0
+                      Variant: AutoLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        FillPortions: =0
+                        Height: =220
+                        LayoutDirection: =LayoutDirection.Vertical
+                        RadiusBottomLeft: =0
+                        RadiusBottomRight: =0
+                        RadiusTopLeft: =0
+                        RadiusTopRight: =0
+                        X: =40
+                        Y: =40
+                      Children:
+                        - Gallery1_4:
+                            Control: Gallery@2.15.0
+                            Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                            Properties:
+                              BorderColor: =RGBA(0, 18, 107, 1)
+                              FillPortions: =0
+                              Height: =Parent.Height
+                              Items: |
+                                =Table([
+                                    {
+                                        Name: Office365Users.UserProfileV2(User().Email).displayName & Char(10),
+                                        Email: User().Email,
+                                        Photo: User().Image,
+                                        Role: Office365Users.UserProfileV2(User().Email).jobTitle
+                                    }
+                                ])
+                              LayoutMinWidth: =0
+                              ShowScrollbar: =false
+                              TemplateSize: =Parent.Height
+                              Width: =Parent.Width
+                            Children:
+                              - Separator2_5:
+                                  Control: Rectangle@2.3.0
+                                  Properties:
+                                    BorderColor: =RGBA(0, 18, 107, 1)
+                                    Fill: =RGBA(255, 255, 255, 1)
+                                    Height: =8
+                                    OnSelect: =Select(Parent)
+                                    Width: =Parent.TemplateWidth
+                                    Y: =27
+                              - Title1_8:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    BorderColor: =RGBA(0, 0, 0, 1)
+                                    Color: =RGBA(255, 255, 255, 1)
+                                    Font: =Font.'Open Sans'
+                                    FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
+                                    Height: =25
+                                    OnSelect: =Select(Parent)
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Text: |-
+                                      ="Logged in as: " & varUserRole
+                                    VerticalAlign: =VerticalAlign.Top
+                                    Width: =218
+                                    X: =16
+                                    Y: =58
+                              - Image2_4:
+                                  Control: Image@2.2.3
+                                  Properties:
+                                    BorderColor: =RGBA(0, 18, 107, 1)
+                                    Height: =72
+                                    Image: =ThisItem.Photo
+                                    OnSelect: =Select(Parent)
+                                    RadiusBottomLeft: =50
+                                    RadiusBottomRight: =50
+                                    RadiusTopLeft: =50
+                                    RadiusTopRight: =50
+                                    Width: =72
+                                    X: =16
+                                    Y: =107
+                              - Title1_9:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    BorderColor: =RGBA(0, 0, 0, 1)
+                                    Color: =RGBA(255, 255, 255, 1)
+                                    Font: =Font.'Open Sans'
+                                    FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
+                                    Height: =58
+                                    OnSelect: =Select(Parent)
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Text: =ThisItem.Name
+                                    VerticalAlign: =VerticalAlign.Top
+                                    Width: =152
+                                    X: =98
+                                    Y: =107
+                              - Subtitle1_4:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    BorderColor: =RGBA(0, 0, 0, 1)
+                                    Color: =RGBA(255, 255, 255, 1)
+                                    Font: =Font.'Open Sans'
+                                    FontWeight: =If(ThisItem.IsSelected, FontWeight.Normal, FontWeight.Normal)
+                                    Height: =Self.Size * 1.8
+                                    OnSelect: =Select(Parent)
+                                    PaddingBottom: =0
+                                    PaddingLeft: =0
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =12
+                                    Text: =ThisItem.Role
+                                    VerticalAlign: =VerticalAlign.Top
+                                    Width: =Title1_9.Width
+                                    X: =98
+                                    Y: =158

@@ -1,0 +1,421 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  Login:
+    Properties:
+      Fill: =RGBA(0, 20, 220, 1)
+      LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
+    Children:
+      - Image2:
+          Control: Image@2.2.3
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =1080
+            Image: =BA_Patterns_ABS_CU_19
+            Width: =1920
+      - Image3:
+          Control: Image@2.2.3
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Height: =662
+            Image: ='fc1b9767-01ee-42d0-ba06-5be706948b5c-Picsart-BackgroundRemover'
+            Width: =1065
+            X: =427
+      - MainButtonContainer:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.Semibold
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =397
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Width: =1621
+            X: =149
+            Y: =599
+          Children:
+            - AdminButtonContainer:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  Fill: =RGBA(0, 20, 220, 1)
+                  Height: =260
+                  RadiusBottomLeft: =30
+                  RadiusBottomRight: =30
+                  RadiusTopLeft: =30
+                  RadiusTopRight: =30
+                  Width: =374
+                  X: =1156
+                  Y: =62
+                Children:
+                  - Image2_6:
+                      Control: Image@2.2.3
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Height: =260
+                        Image: =BA_Patterns_ABS_CU_19
+                        ImagePosition: =ImagePosition.Fill
+                        Transparency: =0.75
+                        Width: =374
+                  - Label11_2:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Color: =RGBA(255, 255, 255, 1)
+                        Font: =Font.'Open Sans'
+                        Size: =20
+                        Text: ="Admin"
+                        X: =112
+                        Y: =189
+                  - Icon9_2:
+                      Control: Icon@0.0.7
+                      Properties:
+                        Height: =142
+                        Icon: ="Settings"
+                        IconColor: =RGBA(255, 255, 255, 1)
+                        Width: =138
+                        X: =118
+                        Y: =29
+                  - Button2_6:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        BorderColor: =ColorFade(Self.Fill, -15%)
+                        Color: =RGBA(255, 255, 255, 1)
+                        DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                        Fill: =RGBA(0, 0, 0, 0)
+                        Font: =Font.'Open Sans'
+                        Height: =260
+                        HoverBorderColor: =
+                        HoverColor: =RGBA(255, 255, 255, 1)
+                        HoverFill: =Color.Transparent
+                        OnSelect: |+
+                          =Set(varuserRole, "Admin");
+                          Navigate('ADMIN Set Requestor',ScreenTransition.Fade);
+                        PressedBorderColor: =
+                        PressedColor: =Self.Fill
+                        PressedFill: =
+                        RadiusBottomLeft: =30
+                        RadiusBottomRight: =30
+                        RadiusTopLeft: =30
+                        RadiusTopRight: =30
+                        Text: =
+                        Width: =374
+            - ApproverButtonContainer:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  Fill: =RGBA(0, 20, 220, 1)
+                  Height: =260
+                  RadiusBottomLeft: =30
+                  RadiusBottomRight: =30
+                  RadiusTopLeft: =30
+                  RadiusTopRight: =30
+                  Width: =374
+                  X: =627
+                  Y: =62
+                Children:
+                  - Image2_5:
+                      Control: Image@2.2.3
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Height: =260
+                        Image: =BA_Patterns_ABS_CU_19
+                        ImagePosition: =ImagePosition.Fill
+                        Transparency: =0.75
+                        Width: =374
+                  - Label11_1:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Color: =RGBA(255, 255, 255, 1)
+                        Font: =Font.'Open Sans'
+                        Size: =20
+                        Text: ="Approver"
+                        X: =112
+                        Y: =188
+                  - Icon9_1:
+                      Control: Icon@0.0.7
+                      Properties:
+                        Height: =142
+                        Icon: ="CheckmarkCircle"
+                        IconColor: =RGBA(255, 255, 255, 1)
+                        Width: =138
+                        X: =118
+                        Y: =34
+                  - Button2_5:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        BorderColor: =ColorFade(Self.Fill, -15%)
+                        Color: =RGBA(255, 255, 255, 1)
+                        DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                        Fill: =RGBA(0, 0, 0, 0)
+                        Font: =Font.'Open Sans'
+                        Height: =260
+                        HoverBorderColor: =
+                        HoverColor: =
+                        HoverFill: =Color.Transparent
+                        OnSelect: |
+                          =Set(varUserRole, "Approver");
+                          Set(varLoggedInEmail, User().Email);
+
+                          // Check if user is 1st or 2nd approver by scanning the whole SharePoint list
+                          ClearCollect(
+                              colUserApproverRoles,
+                              Filter(
+                                  'ITAssetDisposal-Case',
+                                  '1stApproverEmail' = varLoggedInEmail || '2ndApproverEmail' = varLoggedInEmail
+                              )
+                          );
+
+                          // Store approver level based on first matching case
+                          Set(
+                              varIsFirstApprover,
+                              !IsEmpty(Filter(colUserApproverRoles, '1stApproverEmail' = varLoggedInEmail))
+                          );
+                          Set(
+                              varIsSecondApprover,
+                              !IsEmpty(Filter(colUserApproverRoles, '2ndApproverEmail' = varLoggedInEmail))
+                          );
+
+                          // Store the second approver name for confirmation popup if you're the first approver
+                          If(
+                              varIsFirstApprover,
+                              Set(
+                                  varSecondApproverName,
+                                  LookUp(
+                                      colUserApproverRoles,
+                                      '1stApproverEmail' = varLoggedInEmail,
+                                      '2ndApproverName'
+                                  )
+                              )
+                          );
+
+                          // Final conditional navigation
+                          If(
+                              varIsFirstApprover,
+                              Navigate(Approver_ViewRequest1_1stLevel, ScreenTransition.Fade),
+                              If(
+                                  varIsSecondApprover,
+                                  Navigate(Approver_ViewRequest1_2ndLevel, ScreenTransition.Fade)
+                              )
+                          )
+                        PressedBorderColor: =
+                        PressedColor: =Self.Fill
+                        PressedFill: =
+                        Text: =
+                        Width: =374
+            - RequestorButtonContainer:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  Fill: =RGBA(0, 20, 220, 1)
+                  Height: =260
+                  RadiusBottomLeft: =30
+                  RadiusBottomRight: =30
+                  RadiusTopLeft: =30
+                  RadiusTopRight: =30
+                  Width: =374
+                  X: =99
+                  Y: =62
+                Children:
+                  - Image2_1:
+                      Control: Image@2.2.3
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Height: =260
+                        Image: =BA_Patterns_ABS_CU_19
+                        ImagePosition: =ImagePosition.Fill
+                        Transparency: =0.75
+                        Width: =374
+                  - Icon9:
+                      Control: Icon@0.0.7
+                      Properties:
+                        Height: =142
+                        Icon: ="AppsListDetail"
+                        IconColor: =RGBA(255, 255, 255, 1)
+                        Width: =138
+                        X: =118
+                        Y: =33
+                  - Label11:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Color: =RGBA(255, 255, 255, 1)
+                        Font: =Font.'Open Sans'
+                        Size: =20
+                        Text: ="Requestor"
+                        X: =112
+                        Y: =192
+                  - Button2:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        BorderColor: =ColorFade(Self.Fill, -15%)
+                        Color: =RGBA(255, 255, 255, 1)
+                        DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                        Fill: =RGBA(0, 0, 0, 0)
+                        Font: =Font.'Open Sans'
+                        Height: =260
+                        HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                        HoverColor: =RGBA(255, 255, 255, 1)
+                        HoverFill: =Color.Transparent
+                        OnSelect: |+
+                          =Set(varUserRole, "Requestor");
+                          Navigate(Requestor_ViewRequest, ScreenTransition.Fade);
+
+                          Set(varUserEmail, User().Email);
+                          Set(varUserName, User().FullName);
+
+                          ClearCollect(
+                              colWatchlist,
+                              Filter(
+                                  'ITAssetDisposal-Watchlists',
+                                  WatchlistEmail = User().Email
+                              )
+                          );
+
+                        PressedBorderColor: =Self.Fill
+                        PressedColor: =Self.Fill
+                        PressedFill: =
+                        RadiusBottomLeft: =30
+                        RadiusBottomRight: =30
+                        RadiusTopLeft: =30
+                        RadiusTopRight: =30
+                        Text: =
+                        VerticalAlign: =VerticalAlign.Bottom
+                        Width: =374
+            - Label24:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =49
+                  OnSelect: |-
+                    =Set(
+                        varUserRole,
+                        "Approver"
+                    );
+                    Set(
+                        varLoggedInEmail,
+                        User().Email
+                    );
+                    // Check if user is 1st or 2nd approver by scanning the whole SharePoint list
+                    ClearCollect(
+                        colUserApproverRoles,
+                        Filter(
+                            'ITAssetDisposal-Case',
+                            '1stApproverEmail' = varLoggedInEmail || '2ndApproverEmail' = varLoggedInEmail
+                        )
+                    );
+                    // Store approver level based on first matching case
+                    Set(
+                        varIsFirstApprover,
+                        !IsEmpty(
+                            Filter(
+                                colUserApproverRoles,
+                                '1stApproverEmail' = varLoggedInEmail
+                            )
+                        )
+                    );
+                    Set(
+                        varIsSecondApprover,
+                        !IsEmpty(
+                            Filter(
+                                colUserApproverRoles,
+                                '2ndApproverEmail' = varLoggedInEmail
+                            )
+                        )
+                    );
+                    // Store the second approver name for confirmation popup if you're the first approver
+                    If(
+                        varIsFirstApprover,
+                        Set(
+                            varSecondApproverName,
+                            LookUp(
+                                colUserApproverRoles,
+                                '1stApproverEmail' = varLoggedInEmail,
+                                '2ndApproverName'
+                            )
+                        )
+                    );
+                    // Final conditional navigation
+                    If(
+                        varIsSecondApprover,
+                        Navigate(
+                            Approver_ViewRequest1_2ndLevel,
+                            ScreenTransition.Fade
+                        )
+                    )
+                  Text: |-
+                    ="DEBUG
+                    Navigate(Approver_ViewRequest1_2ndLevel)"
+                  Width: =374
+                  X: =627
+                  Y: =339
+      - VersionNumber:
+          Control: Label@2.5.1
+          Group: 'GroupEasterEgg (pls dont remove #sadface)'
+          Properties:
+            Align: =Align.Center
+            AutoHeight: =true
+            BorderColor: =RGBA(0, 18, 107, 1)
+            BorderStyle: =BorderStyle.None
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            HoverFill: =Color.Transparent
+            OnSelect: =Set(varEasterEgg, !varEasterEgg)
+            Text: ="Version 1.0.0"
+            X: =1770
+            Y: =1048
+      - Button5:
+          Control: Classic/Button@2.2.0
+          Group: 'GroupEasterEgg (pls dont remove #sadface)'
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            BorderStyle: =BorderStyle.None
+            Color: =RGBA(0, 0, 0, 0)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisabledFill: =RGBA(0, 0, 0, 0)
+            Fill: =RGBA(0, 0, 0, 0)
+            Font: =Font.'Open Sans'
+            Height: =32
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =Color.Transparent
+            OnSelect: =Set(varEasterEgg, !varEasterEgg)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Text: =
+            Width: =148
+            X: =1770
+            Y: =1048
+      - Easter Egg:
+          Control: Label@2.5.1
+          Group: 'GroupEasterEgg (pls dont remove #sadface)'
+          Properties:
+            AutoHeight: =true
+            BorderColor: =RGBA(0, 18, 107, 1)
+            BorderStyle: =BorderStyle.None
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =28
+            HoverFill: =Color.Transparent
+            Text: ="1.0.0 Made By Muhammad Alif Najmi :D"
+            Visible: =varEasterEgg
+            Width: =341
+            X: =1429
+            Y: =1048

@@ -1,0 +1,6 @@
+ID,LocationID,Location,requestorName,RequestorEmail,1stApproverName,1stApproverEmail,2ndApproverName,2ndApproverEmail,Status,Year,UID
+101,LOC001,East Coast Base,Nur Aisyah,requestor1@example.com,Aiman Rahman,it.manager.east@example.com,Siti Lim,finance.east@example.com,Draft,2025,20250722101511208
+102,LOC001,East Coast Base,Nur Aisyah,requestor1@example.com,Aiman Rahman,it.manager.east@example.com,Siti Lim,finance.east@example.com,Pending 1st Level Approval,2025,20250724103122876
+103,LOC002,Island Base,Kevin Lee,requestor2@example.com,Daniel Wong,it.manager.island@example.com,Siti Lim,finance.east@example.com,Pending 2nd Level Approval,2025,20250728170926514
+104,LOC001,East Coast Base,Kevin Lee,requestor2@example.com,Aiman Rahman,it.manager.east@example.com,Siti Lim,finance.east@example.com,Rejected,2025,20250730163958797
+105,LOC003,Northern Base,Nur Aisyah,requestor1@example.com,Hafiz Omar,it.manager.north@example.com,Grace Tan,finance.north@example.com,Approved,2025,20250801214808779

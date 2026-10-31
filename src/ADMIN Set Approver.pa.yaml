@@ -1,0 +1,489 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  ADMIN Set Approver:
+    Properties:
+      LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
+    Children:
+      - Container1_13:
+          Control: GroupContainer@1.3.0
+          Variant: AutoLayout
+          Properties:
+            Height: =1080
+            LayoutAlignItems: =LayoutAlignItems.Center
+            LayoutDirection: =LayoutDirection.Horizontal
+            Width: =1920
+          Children:
+            - NavAdminView_3:
+                Control: CanvasComponent
+                ComponentName: NavAdminView
+                Properties:
+                  Height: =App.DesignHeight
+                  NavigationItems: |-
+                    =With(
+                        {
+                            MenuItems: Table(
+                                {
+                                    MenuText: "Set Requestor",
+                                    MenuIcon: "PeopleAdd",
+                                    ScreenToGoTo: 'ADMIN Set Requestor'
+
+                                },
+                                {
+                                    MenuText: "Set Approver",
+                                    MenuIcon: "Checkmark",
+                                    ScreenToGoTo: 'ADMIN Set Approver'
+
+                                },
+                                {
+                                    MenuText: "Set Admin",
+                                    MenuIcon: "Warning",
+                                    ScreenToGoTo: 'ADMIN Set Admin'
+
+                                },
+                                {
+                                    MenuText: "Set Location",
+                                    MenuIcon: "Globe",
+                                    ScreenToGoTo: 'ADMIN Set Location'
+                                },
+                                {
+                                    MenuText: "Logout",
+                                    MenuIcon: "ArrowExit",
+                                    ScreenToGoTo: 'Login'
+                                }
+                            )
+                        },
+                        MenuItems
+                    )
+                  UserRole: =varUserRole
+                  Width: =250
+            - Main Set Location Container_5:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Children:
+                  - Container4_11:
+                      Control: GroupContainer@1.3.0
+                      Variant: ManualLayout
+                      Properties:
+                        Height: =1080
+                        RadiusBottomLeft: =0
+                        RadiusBottomRight: =0
+                        RadiusTopLeft: =0
+                        RadiusTopRight: =0
+                        Width: =990
+                      Children:
+                        - Gallery3_8:
+                            Control: Gallery@2.15.0
+                            Variant: Vertical
+                            Properties:
+                              BorderColor: =RGBA(0, 18, 107, 1)
+                              Height: =957
+                              Items: =Requestor
+                              TemplatePadding: =15
+                              TemplateSize: =65
+                              Width: =968
+                              X: =9
+                              Y: =95
+                            Children:
+                              - Container6_8:
+                                  Control: GroupContainer@1.3.0
+                                  Variant: ManualLayout
+                                  Properties:
+                                    DropShadow: =DropShadow.Semibold
+                                    Height: =64
+                                    Width: =938
+                              - Label2_26:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    BorderColor: =RGBA(0, 18, 107, 1)
+                                    Font: =Font.'Open Sans'
+                                    Height: =52
+                                    OnSelect: =Select(Parent)
+                                    Text: =ThisItem.Email
+                                    Width: =194
+                                    X: =482
+                                    Y: =6
+                              - Label2_27:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    BorderColor: =RGBA(0, 18, 107, 1)
+                                    Font: =Font.'Open Sans'
+                                    Height: =52
+                                    OnSelect: =Select(Parent)
+                                    Text: =ThisItem.Name
+                                    Width: =377
+                                    X: =88
+                                    Y: =6
+                              - Icon2_9:
+                                  Control: Classic/Icon@2.5.0
+                                  Properties:
+                                    BorderColor: =RGBA(0, 18, 107, 1)
+                                    Color: =RGBA(255, 0, 0, 1)
+                                    Height: =40
+                                    Icon: =Icon.Trash
+                                    OnSelect: |-
+                                      =Set(varDeleteTarget, ThisItem);
+                                      Set(varShowDeleteConfirm, true)
+                                    Width: =40
+                                    X: =869
+                                    Y: =12
+                              - Label2_28:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    BorderColor: =RGBA(0, 18, 107, 1)
+                                    Font: =Font.'Open Sans'
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =52
+                                    OnSelect: =Select(Parent)
+                                    Text: |
+                                      =ThisItem.ID
+                                    Width: =43
+                                    X: =17
+                                    Y: =6
+                        - Container11_27:
+                            Control: GroupContainer@1.3.0
+                            Variant: ManualLayout
+                            Properties:
+                              DropShadow: =DropShadow.Semibold
+                              Fill: =RGBA(0, 20, 220, 1)
+                              Height: =81
+                              RadiusBottomLeft: =50
+                              RadiusBottomRight: =50
+                              RadiusTopLeft: |
+                                =0
+                              RadiusTopRight: =0
+                              Width: =906
+                              X: =40
+                            Children:
+                              - Label3_23:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Align: =Align.Center
+                                    BorderColor: =RGBA(0, 18, 107, 1)
+                                    Color: =RGBA(255, 255, 255, 1)
+                                    Font: =Font.'Open Sans'
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =56
+                                    Size: =18
+                                    Text: ="Name"
+                                    Width: =147
+                                    X: =99
+                                    Y: =12
+                              - Label3_24:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Align: =Align.Center
+                                    BorderColor: =RGBA(0, 18, 107, 1)
+                                    Color: =RGBA(255, 255, 255, 1)
+                                    Font: =Font.'Open Sans'
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =56
+                                    Size: =18
+                                    Text: ="Email"
+                                    Width: =156
+                                    X: =481
+                                    Y: =12
+                  - Form Container_4:
+                      Control: GroupContainer@1.3.0
+                      Variant: ManualLayout
+                      Properties:
+                        Height: =1080
+                        RadiusBottomLeft: =0
+                        RadiusBottomRight: =0
+                        RadiusTopLeft: =0
+                        RadiusTopRight: =0
+                        Width: =680
+                        X: =990
+                      Children:
+                        - Container11_28:
+                            Control: GroupContainer@1.3.0
+                            Variant: ManualLayout
+                            Properties:
+                              DropShadow: =DropShadow.Semibold
+                              Fill: =RGBA(0, 20, 220, 1)
+                              Height: =81
+                              RadiusBottomLeft: =50
+                              RadiusBottomRight: =50
+                              RadiusTopLeft: |
+                                =0
+                              RadiusTopRight: =0
+                              Width: =345
+                              X: =175
+                            Children:
+                              - Label3_25:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Align: =Align.Center
+                                    BorderColor: =RGBA(0, 18, 107, 1)
+                                    Color: =RGBA(255, 255, 255, 1)
+                                    Font: =Font.'Open Sans'
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =56
+                                    Size: =18
+                                    Text: ="Set Requestor"
+                                    Width: =192
+                                    X: =75
+                                    Y: =10
+                        - Form Set Location_4:
+                            Control: Form@2.4.4
+                            Layout: Vertical
+                            Properties:
+                              BorderColor: =RGBA(0, 18, 107, 1)
+                              DataSource: =Requestor
+                              DefaultMode: =FormMode.New
+                              Height: =215
+                              NumberOfColumns: =1
+                              OnSuccess: =ResetForm('Form Set Location_4');
+                              Width: =407
+                              X: =147
+                              Y: =282
+                            Children:
+                              - Name_DataCard2_1:
+                                  Control: TypedDataCard@1.0.7
+                                  Variant: TextualEdit
+                                  IsLocked: true
+                                  Properties:
+                                    BorderColor: =RGBA(0, 18, 107, 1)
+                                    DataField: ="Name"
+                                    Default: =ThisItem.Name
+                                    DisplayName: =DataSourceInfo([@Requestor],DataSourceInfo.DisplayName,Name)
+                                    MaxLength: =DataSourceInfo([@Requestor], DataSourceInfo.MaxLength, Name)
+                                    Required: =false
+                                    Update: =DataCardValue11_1.Value
+                                    Width: =407
+                                    X: =0
+                                    Y: =0
+                                  Children:
+                                    - DataCardKey11_1:
+                                        Control: Text@0.0.51
+                                        MetadataKey: FieldName
+                                        Properties:
+                                          Height: =22
+                                          Text: =Parent.DisplayName
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          Width: =Parent.Width - 48
+                                          Wrap: =false
+                                          X: =24
+                                          Y: =10
+                                    - DataCardValue11_1:
+                                        Control: TextInput@0.0.54
+                                        MetadataKey: FieldValue
+                                        Properties:
+                                          AccessibleLabel: =Parent.DisplayName
+                                          DisplayMode: =Parent.DisplayMode
+                                          Mode: ="'TextInputCanvas.Mode'.TextInputModeSingleLine"
+                                          Required: =Parent.Required
+                                          ValidationState: =If(IsBlank(Parent.Error), "None", "Error")
+                                          Value: =Parent.Default
+                                          Width: =Parent.Width - 48
+                                          X: =24
+                                          Y: =DataCardKey11_1.Y + DataCardKey11_1.Height + 4
+                                    - ErrorMessage10_1:
+                                        Control: Text@0.0.51
+                                        MetadataKey: ErrorMessage
+                                        Properties:
+                                          Height: =30
+                                          Text: =Parent.Error
+                                          Visible: =And(!IsBlank(Parent.Error), Parent.DisplayMode=DisplayMode.Edit)
+                                          Width: =Parent.Width - 48
+                                          X: =24
+                                          Y: =DataCardValue11_1.Y + DataCardValue11_1.Height
+                                    - StarVisible10_1:
+                                        Control: Text@0.0.51
+                                        MetadataKey: FieldRequired
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          Height: =30
+                                          Text: ="*"
+                                          Visible: =And(Parent.Required, Parent.DisplayMode=DisplayMode.Edit)
+                                          Width: =30
+                                          Y: =DataCardKey11_1.Y
+                              - Email_DataCard2_1:
+                                  Control: TypedDataCard@1.0.7
+                                  Variant: TextualEdit
+                                  IsLocked: true
+                                  Properties:
+                                    BorderColor: =RGBA(0, 18, 107, 1)
+                                    DataField: ="Email"
+                                    Default: =ThisItem.Email
+                                    DisplayName: =DataSourceInfo([@Requestor],DataSourceInfo.DisplayName,Email)
+                                    MaxLength: =DataSourceInfo([@Requestor], DataSourceInfo.MaxLength, Email)
+                                    Required: =false
+                                    Update: =DataCardValue12_1.Value
+                                    Width: =407
+                                    X: =0
+                                    Y: =1
+                                  Children:
+                                    - DataCardKey12_1:
+                                        Control: Text@0.0.51
+                                        MetadataKey: FieldName
+                                        Properties:
+                                          Height: =22
+                                          Text: =Parent.DisplayName
+                                          Weight: ='TextCanvas.Weight'.Semibold
+                                          Width: =Parent.Width - 48
+                                          Wrap: =false
+                                          X: =24
+                                          Y: =10
+                                    - DataCardValue12_1:
+                                        Control: TextInput@0.0.54
+                                        MetadataKey: FieldValue
+                                        Properties:
+                                          AccessibleLabel: =Parent.DisplayName
+                                          DisplayMode: =Parent.DisplayMode
+                                          Mode: ="'TextInputCanvas.Mode'.TextInputModeSingleLine"
+                                          Required: =Parent.Required
+                                          ValidationState: =If(IsBlank(Parent.Error), "None", "Error")
+                                          Value: =Parent.Default
+                                          Width: =Parent.Width - 48
+                                          X: =24
+                                          Y: =DataCardKey12_1.Y + DataCardKey12_1.Height + 4
+                                    - ErrorMessage11_1:
+                                        Control: Text@0.0.51
+                                        MetadataKey: ErrorMessage
+                                        Properties:
+                                          Height: =30
+                                          Text: =Parent.Error
+                                          Visible: =And(!IsBlank(Parent.Error), Parent.DisplayMode=DisplayMode.Edit)
+                                          Width: =Parent.Width - 48
+                                          X: =24
+                                          Y: =DataCardValue12_1.Y + DataCardValue12_1.Height
+                                    - StarVisible11_1:
+                                        Control: Text@0.0.51
+                                        MetadataKey: FieldRequired
+                                        Properties:
+                                          Align: ='TextCanvas.Align'.Center
+                                          Height: =30
+                                          Text: ="*"
+                                          Visible: =And(Parent.Required, Parent.DisplayMode=DisplayMode.Edit)
+                                          Width: =30
+                                          Y: =DataCardKey12_1.Y
+                        - Container11_30:
+                            Control: GroupContainer@1.3.0
+                            Variant: ManualLayout
+                            Properties:
+                              DropShadow: =DropShadow.Semibold
+                              Fill: =RGBA(0, 20, 220, 1)
+                              Height: =43
+                              RadiusBottomLeft: =50
+                              RadiusBottomRight: =50
+                              RadiusTopLeft: =50
+                              RadiusTopRight: =50
+                              Width: =569
+                              X: =52
+                              Y: =128
+                        - Button1_4:
+                            Control: Classic/Button@2.2.0
+                            Properties:
+                              BorderColor: =ColorFade(Self.Fill, -15%)
+                              Color: =RGBA(255, 255, 255, 1)
+                              DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                              DisplayMode: |
+                                =If(
+                                   !'Form Set Location_4'.Valid,
+                                   DisplayMode.Disabled,
+                                   DisplayMode.Edit
+                                )
+                              Fill: =RGBA(56, 96, 178, 1)
+                              Font: =Font.'Open Sans'
+                              Height: =43
+                              HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                              HoverColor: =RGBA(255, 255, 255, 1)
+                              HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                              OnSelect: |-
+                                =SubmitForm('Form Set Location_4');
+                                Refresh('ITAssetDisposal-Location')
+                              PressedBorderColor: =Self.Fill
+                              PressedColor: =Self.Fill
+                              PressedFill: =Self.Color
+                              RadiusBottomLeft: =50
+                              RadiusBottomRight: =50
+                              RadiusTopLeft: =50
+                              RadiusTopRight: =50
+                              Text: ="Submit"
+                              Width: =191
+                              X: =241
+                              Y: =542
+                  - ContainerDeleteConfirmation_6:
+                      Control: GroupContainer@1.3.0
+                      Variant: ManualLayout
+                      Properties:
+                        Fill: =RGBA(53, 61, 63, 0.5)
+                        Height: =1080
+                        Visible: |
+                          =varShowDeleteConfirm
+                        Width: =1670
+                      Children:
+                        - DeletePopUp_6:
+                            Control: GroupContainer@1.3.0
+                            Variant: ManualLayout
+                            Properties:
+                              Fill: =RGBA(255, 255, 255, 1)
+                              X: =Parent.Width/2 - Self.Width/2
+                              Y: =Parent.Height/2 - Self.Height/2
+                            Children:
+                              - Label4_6:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    Align: =Align.Center
+                                    BorderColor: =RGBA(0, 18, 107, 1)
+                                    Color: =RGBA(255, 0, 0, 1)
+                                    Font: =Font.'Open Sans'
+                                    FontWeight: =FontWeight.Bold
+                                    Height: =59
+                                    Size: =14
+                                    Text: ="Are you sure you want to delete this data?"
+                                    Width: =422
+                                    X: =35
+                                    Y: =30
+                              - Button Delete_6:
+                                  Control: Classic/Button@2.2.0
+                                  Properties:
+                                    BorderColor: =ColorFade(Self.Fill, -15%)
+                                    Color: =RGBA(255, 255, 255, 1)
+                                    DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                                    Fill: =RGBA(106, 122, 127, 1)
+                                    Font: =Font.'Open Sans'
+                                    Height: =42
+                                    HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                                    HoverColor: =RGBA(255, 255, 255, 1)
+                                    HoverFill: =Color.Red
+                                    OnSelect: |-
+                                      =Remove('ITAssetDisposal-Location', varDeleteTarget);
+                                      Set(varShowDeleteConfirm, false);
+                                      Set(varDeleteTarget, Blank())
+                                    PressedBorderColor: =Self.Fill
+                                    PressedColor: =Self.Fill
+                                    PressedFill: =Self.Color
+                                    Text: ="Delete"
+                                    Width: =191
+                                    X: =35
+                                    Y: =116
+                              - Button Cancel_6:
+                                  Control: Classic/Button@2.2.0
+                                  Properties:
+                                    BorderColor: =ColorFade(Self.Fill, -15%)
+                                    Color: =RGBA(255, 255, 255, 1)
+                                    DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                                    Fill: =RGBA(110, 140, 200, 1)
+                                    Font: =Font.'Open Sans'
+                                    Height: =43
+                                    HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                                    HoverColor: =RGBA(255, 255, 255, 1)
+                                    HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                                    OnSelect: |-
+                                      =Set(varShowDeleteConfirm, false);
+                                      Set(varDeleteTarget, Blank())
+                                    PressedBorderColor: =Self.Fill
+                                    PressedColor: =Self.Fill
+                                    PressedFill: =Self.Color
+                                    Text: ="Cancel"
+                                    Width: =191
+                                    X: =266
+                                    Y: =116

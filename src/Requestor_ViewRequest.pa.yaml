@@ -1,0 +1,2741 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  Requestor_ViewRequest:
+    Properties:
+      LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
+      OnVisible: |+
+        =Set(varSelectedMenu, "View Request");
+        Set(varEditDraft,false);
+        Set(varItemList,false);
+
+    Children:
+      - ContainerGalleryViewRequest:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.Semibold
+            Height: =971
+            RadiusBottomLeft: =12
+            RadiusBottomRight: =12
+            RadiusTopLeft: =12
+            RadiusTopRight: =12
+            Width: =465
+            X: =288
+            Y: =87
+          Children:
+            - Gallery3:
+                Control: Gallery@2.15.0
+                Variant: Vertical
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  BorderStyle: =BorderStyle.None
+                  Height: =849
+                  Items: |+
+                    =Sort(
+                        Filter(
+                            'ITAssetDisposal-Case',
+                            (Status = varSelectedStatus || IsBlank(varSelectedStatus)) &&
+                            (
+                                RequestorEmail = User().Email ||
+                                ID in colWatchlist.caseID
+                            )
+                        ),
+                        ID,
+                        SortOrder.Descending
+                    )
+                  ShowScrollbar: =false
+                  TemplatePadding: |+
+                    =5
+                  TemplateSize: =144
+                  Width: =465
+                  Y: =62
+                Children:
+                  - Label6:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =21
+                        OnSelect: =Select(Parent)
+                        Text: ="Case ID - " & ThisItem.ID
+                        Width: =244
+                        X: =53
+                        Y: =21
+                  - Label6_1:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =43
+                        OnSelect: =Select(Parent)
+                        Text: =ThisItem.LocationID
+                        Width: =86
+                        X: =53
+                        Y: =51
+                  - Label6_2:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =43
+                        OnSelect: =Select(Parent)
+                        Text: |+
+                          =Text(ThisItem.Modified, "[$-en-US]dd/mm/yyyy")
+                        Width: =143
+                        X: =215
+                        Y: =51
+                  - Label6_3:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =43
+                        OnSelect: =Select(Parent)
+                        Text: =ThisItem.Status
+                        Width: =271
+                        X: =53
+                        Y: =85
+                  - Rectangle8:
+                      Control: Rectangle@2.3.0
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Fill: =RGBA(214, 221, 224, 1)
+                        Height: =3
+                        OnSelect: =Select(Parent)
+                        Width: =453
+                        Y: =143
+                  - Rectangle9:
+                      Control: Rectangle@2.3.0
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Fill: |+
+                          =If(
+                              varItemList && ThisItem.ID = varSelectedCase.ID,
+                              RGBA(215, 58, 60, 1),
+                              Color.Transparent
+                          )
+                        Height: =140
+                        OnSelect: =Select(Parent)
+                        Width: =6
+                  - Icon3:
+                      Control: Classic/Icon@2.5.0
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Color: =RGBA(0, 18, 107, 1)
+                        Height: =92
+                        Icon: =Icon.ChevronRight
+                        OnSelect: |-
+                          =// Step 1: Set the selected case
+                          Set(
+                              varSelectedCase,
+                              ThisItem
+                          );
+                          // Step 2: Load SharePoint items related to this case
+                          ClearCollect(
+                              colSharePointItems,
+                              Filter(
+                                  'ITAssetDisposal-Item',
+                                  caseNo = Text(ThisItem.ID)
+                              )
+                          );
+                          // Step 3: Clear newly added (unsaved) items
+                          Clear(colNewItems);
+                          // Step 4: Combine both for display
+                          ClearCollect(
+                              colCombinedAssets,
+                              colSharePointItems,
+                              colNewItems
+                          );
+                          // Step 5: Decide which container to show
+                          Set(
+                              varEditDraft,
+                              false
+                          );
+                          Set(
+                              varItemList,
+                              true
+                          );
+
+                          Set(
+                              varLocationApprover,
+                              LookUp(
+                                  'ITAssetDisposal-Location',
+                                  Title = varSelectedCase.LocationID
+                              )
+                          )
+                        Width: =37
+                        X: =396
+                        Y: =33
+            - Gallery4:
+                Control: Gallery@2.15.0
+                Variant: Horizontal
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Height: =55
+                  Items: |+
+                    =[
+                        { label: "All", value: Blank() },
+                        { label: "Draft", value: "Draft" },
+                        { label: "1st Level", value: "Pending 1st Level Approval" },
+                        { label: "2nd Level", value: "Pending 2nd Level Approval" },
+                        { label: "Approved", value: "Approved" },
+                        { label: "Rejected", value: "Rejected" }
+                    ]
+                  TemplateSize: =70
+                  Width: =465
+                Children:
+                  - Label7:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =45
+                        OnSelect: =Select(Parent)
+                        Size: =9
+                        Text: =ThisItem.label
+                        Width: =68
+                  - Rectangle9_2:
+                      Control: Rectangle@2.3.0
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Fill: =RGBA(184, 0, 0, 1)
+                        Height: =1
+                        OnSelect: =Select(Parent)
+                        Visible: |
+                          =varSelectedStatus = ThisItem.value || (IsBlank(varSelectedStatus) && IsBlank(ThisItem.value))
+                        Width: =45
+                        X: =13
+                        Y: =37
+                  - Button3:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        BorderColor: =ColorFade(Self.Fill, -15%)
+                        BorderThickness: =5
+                        Color: =RGBA(0, 0, 0, 1)
+                        DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                        Fill: =RGBA(0, 0, 0, 0)
+                        Font: =Font.'Open Sans'
+                        Height: =45
+                        HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                        HoverColor: =RGBA(0, 0, 0, 1)
+                        HoverFill: =Color.Transparent
+                        OnSelect: |
+                          =Set(varSelectedStatus, ThisItem.value)
+                        PressedBorderColor: =Self.Fill
+                        PressedColor: =Self.Fill
+                        PressedFill: =Color.Transparent
+                        RadiusBottomLeft: =0
+                        RadiusBottomRight: =0
+                        RadiusTopLeft: =0
+                        RadiusTopRight: =0
+                        Text: =
+                        Width: =68
+            - Rectangle8_2:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(214, 221, 224, 1)
+                  Height: =3
+                  Width: =453
+                  X: =6
+                  Y: =55
+      - NavRequestorView_2:
+          Control: CanvasComponent
+          ComponentName: NavRequestorView
+          Properties:
+            Height: =App.DesignHeight
+            NavigationItems: |-
+              =With(
+                  {
+                      MenuItems: Table(
+                          {
+                              MenuText: "View Request",
+                              MenuIcon: "DocumentBulletList",
+                              ScreenToGoTo: Requestor_ViewRequest
+                          },
+                          {
+                              MenuText: "Add New",
+                              MenuIcon: "Add",
+                              ScreenToGoTo: Requestor_NewRequest_1
+                          },
+                          {
+                              MenuText: "Contact Us",
+                              MenuIcon: "Info",
+                              ScreenToGoTo: 'Contact Us'
+                          },
+                          {
+                              MenuText: "Logout",
+                              MenuIcon: "ArrowExit",
+                              ScreenToGoTo: 'Login'
+                          }
+                      )
+                  },
+                  MenuItems
+              )
+            UserRole: =varUserRole
+            Width: =250
+      - Label1:
+          Control: Label@2.5.1
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =134
+            Size: =30
+            Text: |-
+              ="Select your case from the gallery
+              "
+            Width: =794
+            X: =943
+            Y: =414
+      - Icon1:
+          Control: Classic/Icon@2.5.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 0, 0, 1)
+            Height: =106
+            Icon: =Icon.ArrowLeft
+            Width: =357
+            X: =1161
+            Y: =548
+      - BackgroundRectangle:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 0, 0, 0.51)
+            Height: =1080
+            Visible: =varEditDraft
+            Width: =1920
+      - ContainerEditDraft:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Properties:
+            BorderColor: =RGBA(214, 221, 224, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =971
+            RadiusBottomLeft: =20
+            RadiusBottomRight: =20
+            RadiusTopLeft: =20
+            RadiusTopRight: =20
+            Visible: =varEditDraft
+            Width: =1098
+            X: =791
+            Y: =87
+          Children:
+            - Rectangle5_1:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(214, 221, 224, 1)
+                  Height: =64
+                  Width: =1098
+            - Button_asset_2:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  DisplayMode: |+
+                    =If(
+                        varAssetType = "Asset" || varEditMode,
+                        DisplayMode.Disabled,
+                        DisplayMode.Edit
+                    )
+
+                  Fill: =RGBA(0, 20, 220, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =38
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                  OnSelect: |
+                    =Set(varAssetType, "Asset")
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  Text: ="Asset"
+                  Width: =170
+                  X: =233
+                  Y: =102
+            - Button_nonasset_2:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  DisplayMode: |+
+                    =If(
+                        varAssetType = "Non Asset" || varEditMode,
+                        DisplayMode.Disabled,
+                        DisplayMode.Edit
+                    )
+                  Fill: =RGBA(0, 20, 220, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =38
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: |-
+                    =ColorFade(
+                        RGBA(
+                            0,
+                            20,
+                            220,
+                            100
+                        ),
+                        -20%
+                    )
+                  OnSelect: |
+                    =Set(varAssetType, "Non Asset")
+                  PressedBorderColor: |-
+                    =ColorFade(
+                        RGBA(
+                            0,
+                            20,
+                            220,
+                            100
+                        ),
+                        -20%
+                    )
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  Text: ="Non Asset"
+                  Width: =170
+                  X: =436
+                  Y: =102
+            - Label9_1:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =41
+                  Size: =15
+                  Text: ="Select Asset Type:"
+                  Width: =200
+                  X: =28
+                  Y: =101
+            - ButtonSaveDraft:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  DisplayMode: |+
+                    =If(
+                        (CountRows(colNewItems) > 0 && Checkbox1.Value) || varHasEditedOnce,
+                        DisplayMode.Edit,
+                        DisplayMode.Disabled
+                    )
+                  Fill: =RGBA(0, 20, 220, 1)
+                  Font: =Font.'Open Sans'
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: |-
+                    =ColorFade(
+                        RGBA(
+                            0,
+                            20,
+                            220,
+                            100
+                        ),
+                        -20%
+                    )
+                  OnSelect: |
+                    =// Step 1: Save each new item to SharePoint
+                    ForAll(
+                        colNewItems,
+                        Patch(
+                            'ITAssetDisposal-Item',
+                            Defaults('ITAssetDisposal-Item'),
+                            {
+                                caseNo: varSelectedCase.ID,
+                                assetType: ThisRecord.assetType,
+                                Items: ThisRecord.Items,
+                                assetModel: ThisRecord.assetModel,
+                                assetBrand: ThisRecord.assetBrand,
+                                SerialNum: ThisRecord.SerialNum,
+                                AssetTag: ThisRecord.AssetTag,
+                                Quantity: If(
+                                    IsBlank(ThisRecord.Quantity),
+                                    "-",
+                                    ThisRecord.Quantity
+                                ),
+                                UID: ThisRecord.UID
+                            }
+                        )
+                    );
+
+                    // Step 2: Clear temporary collection for new items
+                    Clear(colNewItems);
+                    Set(varSelectedItem, Blank());
+
+                    // Step 3: Delete marked items from SharePoint
+                    ForAll(
+                        colDeletedItems,
+                        RemoveIf(
+                            'ITAssetDisposal-Item',
+                            UID = ThisRecord.UID
+                        )
+                    );
+                    Clear(colDeletedItems); // Clear temp deletion list
+
+                    // Step 4: Refresh SharePoint items for the current case
+                    ClearCollect(
+                        colSharePointItems,
+                        Filter(
+                            'ITAssetDisposal-Item',
+                            caseNo = Text(varSelectedCase.ID)
+                        )
+                    );
+
+                    // Step 5: Rebuild combined gallery data (only from SharePoint now)
+                    ClearCollect(
+                        colCombinedAssets,
+                        colSharePointItems
+                    );
+
+                    // Step 6: Exit edit mode and return to view mode
+                    Set(varEditDraft, false);
+                    Set(varItemList, true);
+
+                    // Step 7: Show success notification
+                    Notify(
+                        "New items saved and deleted items removed successfully!",
+                        NotificationType.Success
+                    );
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  Text: ="Save"
+                  X: =908
+                  Y: =897
+            - Label12_1:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =47
+                  Size: =16
+                  Text: ="Case ID - " & varSelectedCase.ID
+                  Width: =190
+                  X: =465
+                  Y: =8
+            - EditingGalleryList:
+                Control: Gallery@2.15.0
+                Variant: Vertical
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Height: =388
+                  Items: |
+                    =colCombinedAssets
+                  OnSelect: |+
+                    =Set(varSelectedItem, ThisItem);
+                    Set(varAssetType, ThisItem.assetType);
+                    Set(varEditMode, true);
+                    Set(varItemToEditUID, ThisItem.UID)
+                  ShowNavigation: =true
+                  ShowScrollbar: =false
+                  TemplateSize: =118
+                  Width: =1055
+                  X: =27
+                  Y: =487
+                Children:
+                  - Label8_44:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =37
+                        OnSelect: =Select(Parent)
+                        Text: =ThisItem.assetBrand
+                        Width: =105
+                        X: =271
+                        Y: =47
+                  - Label8_45:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =32
+                        OnSelect: =Select(Parent)
+                        Text: =ThisItem.assetModel
+                        Width: =174
+                        X: =415
+                        Y: =44
+                  - Label8_46:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =42
+                        OnSelect: =Select(Parent)
+                        Text: =ThisItem.Items
+                        Width: =130
+                        X: =116
+                        Y: =43
+                  - Label8_47:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =37
+                        OnSelect: =Select(Parent)
+                        Text: =ThisItem.Quantity
+                        Width: =105
+                        X: =835
+                        Y: =47
+                  - Label13_12:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Bold
+                        Height: =37
+                        OnSelect: =Select(Parent)
+                        Text: ="Quantity"
+                        Width: =100
+                        X: =835
+                        Y: =9
+                  - Label13_13:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Bold
+                        Height: =37
+                        OnSelect: =Select(Parent)
+                        Text: ="Item"
+                        Width: =100
+                        X: =131
+                        Y: =9
+                  - Label13_14:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Bold
+                        Height: =37
+                        OnSelect: =Select(Parent)
+                        Text: ="Manufacturer"
+                        Width: =137
+                        X: =257
+                        Y: =9
+                  - Label13_15:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Bold
+                        Height: =37
+                        OnSelect: =Select(Parent)
+                        Text: ="Model"
+                        Width: =100
+                        X: =452
+                        Y: =9
+                  - Label8_48:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =37
+                        OnSelect: =Select(Parent)
+                        Text: =ThisItem.AssetTag
+                        Width: =105
+                        X: =590
+                        Y: =49
+                  - Label13_16:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Bold
+                        Height: =37
+                        OnSelect: =Select(Parent)
+                        Text: ="Asset Tag"
+                        Width: =100
+                        X: =590
+                        Y: =9
+                  - Label8_49:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =37
+                        OnSelect: =Select(Parent)
+                        Text: =ThisItem.SerialNum
+                        Width: =105
+                        X: =716
+                        Y: =47
+                  - Label13_17:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Bold
+                        Height: =37
+                        OnSelect: =Select(Parent)
+                        Text: ="Serial"
+                        Width: =100
+                        X: =716
+                        Y: =9
+                  - Rectangle11_2:
+                      Control: Rectangle@2.3.0
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Fill: =RGBA(214, 221, 224, 1)
+                        Height: =3
+                        OnSelect: =Select(Parent)
+                        Width: =1056
+                        Y: =115
+                  - Icon10_2:
+                      Control: Classic/Icon@2.5.0
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Color: =RGBA(0, 18, 107, 1)
+                        Height: =53
+                        Icon: =Icon.Trash
+                        OnSelect: |+
+                          =Set(varItemToDeleteUID, ThisItem.UID);
+                          Set(varShowDeletePopup, true);
+
+                        Width: =47
+                        X: =970
+                        Y: =32
+                  - Container11_2:
+                      Control: GroupContainer@1.3.0
+                      Variant: ManualLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Height: =46
+                        PaddingRight: |+
+                          =0
+
+                        RadiusBottomLeft: |+
+                          =0
+                        RadiusBottomRight: |
+                          =100
+                        Width: =131
+                      Children:
+                        - Label8_50:
+                            Control: Label@2.5.1
+                            Properties:
+                              Align: =Align.Center
+                              BorderColor: =RGBA(0, 18, 107, 1)
+                              Color: =RGBA(255, 255, 255, 1)
+                              Fill: =RGBA(0, 20, 220, 1)
+                              Font: =Font.'Open Sans'
+                              FontWeight: =FontWeight.Semibold
+                              Height: =46
+                              OnSelect: |
+                                =false
+                              Text: =ThisItem.assetType
+                              Width: =131
+                  - ButtonToShowClickable:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        BorderColor: =ColorFade(Self.Fill, -15%)
+                        Color: =RGBA(0, 0, 0, 0)
+                        DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                        DisabledColor: =RGBA(0, 0, 0, 0)
+                        Fill: =RGBA(0, 0, 0, 0)
+                        Font: =Font.'Open Sans'
+                        Height: =118
+                        HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                        HoverColor: =RGBA(0, 0, 0, 0)
+                        HoverFill: =Color.Transparent
+                        OnSelect: =Select(Parent)
+                        PressedBorderColor: =Self.Fill
+                        PressedColor: =Color.Transparent
+                        PressedFill: =Color.Transparent
+                        Width: =961
+                  - Container Delete Confirmation_2:
+                      Control: GroupContainer@1.3.0
+                      Variant: ManualLayout
+                      Properties:
+                        BorderColor: =RGBA(255, 0, 0, 1)
+                        BorderThickness: =5
+                        DropShadow: =DropShadow.None
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =118
+                        RadiusBottomLeft: =0
+                        RadiusBottomRight: =0
+                        RadiusTopLeft: =0
+                        RadiusTopRight: =0
+                        Visible: |
+                          =varShowDeletePopup && ThisItem.UID = varItemToDeleteUID
+                        Width: =1044
+                      Children:
+                        - Label15_2:
+                            Control: Label@2.5.1
+                            Properties:
+                              Align: =Align.Center
+                              AutoHeight: =true
+                              BorderColor: =RGBA(0, 18, 107, 1)
+                              Font: =Font.'Open Sans'
+                              FontWeight: =FontWeight.Semibold
+                              Height: =78
+                              Size: =15
+                              Text: ="Are you sure you want to delete this data?"
+                              Width: =229
+                              X: =149
+                              Y: =34
+                        - ButtonSave_5:
+                            Control: Classic/Button@2.2.0
+                            Properties:
+                              BorderColor: =ColorFade(Self.Fill, -15%)
+                              Color: =RGBA(255, 255, 255, 1)
+                              DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                              DisplayMode: =
+                              Fill: =RGBA(122, 138, 143, 1)
+                              Font: =Font.'Open Sans'
+                              HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                              HoverColor: =RGBA(255, 255, 255, 1)
+                              HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                              OnSelect: |
+                                =Set(varShowDeletePopup, false)
+                              PressedBorderColor: =Self.Fill
+                              PressedColor: =Self.Fill
+                              PressedFill: =Self.Color
+                              Text: ="Cancel"
+                              X: =669
+                              Y: =44
+                        - ButtonSave_6:
+                            Control: Classic/Button@2.2.0
+                            Properties:
+                              BorderColor: =ColorFade(Self.Fill, -15%)
+                              Color: =RGBA(255, 255, 255, 1)
+                              DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                              DisplayMode: =
+                              Fill: =RGBA(215, 58, 60, 1)
+                              Font: =Font.'Open Sans'
+                              HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                              HoverColor: =RGBA(255, 255, 255, 1)
+                              HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                              OnSelect: |
+                                =// Step 1: Mark item for deletion (only if it's from SharePoint)
+                                If(
+                                    !IsBlank(LookUp(colSharePointItems, UID = varItemToDeleteUID)),
+                                    Collect(
+                                        colDeletedItems,
+                                        LookUp(colSharePointItems, UID = varItemToDeleteUID)
+                                    )
+                                );
+
+                                // Step 2: Remove from colNewItems (unsaved new items)
+                                RemoveIf(
+                                    colNewItems,
+                                    UID = varItemToDeleteUID
+                                );
+
+                                // Step 3: Remove from colSharePointItems (temporarily, for UI refresh)
+                                RemoveIf(
+                                    colSharePointItems,
+                                    UID = varItemToDeleteUID
+                                );
+
+                                // Step 4: Rebuild colCombinedAssets (merged list for gallery)
+                                ClearCollect(
+                                    colCombinedAssets,
+                                    colSharePointItems,
+                                    colAssetItems,
+                                    colNewItems
+                                );
+
+                                // Step 5: Close delete confirmation popup
+                                Set(varShowDeletePopup, false);
+                              PressedBorderColor: =Self.Fill
+                              PressedColor: =Self.Fill
+                              PressedFill: =Self.Color
+                              Text: ="Yes"
+                              X: =422
+                              Y: =43
+                        - Icon11_5:
+                            Control: Classic/Icon@2.5.0
+                            Properties:
+                              BorderColor: =RGBA(0, 18, 107, 1)
+                              Color: =RGBA(255, 0, 0, 1)
+                              Height: =76
+                              Icon: =Icon.Warning
+                              Width: =81
+                              X: =900
+                              Y: =26
+                        - Icon11_6:
+                            Control: Classic/Icon@2.5.0
+                            Properties:
+                              BorderColor: =RGBA(0, 18, 107, 1)
+                              Color: =RGBA(255, 0, 0, 1)
+                              Height: =76
+                              Icon: =Icon.Warning
+                              Width: =81
+                              X: =25
+                              Y: =26
+            - LabelFillDaFields:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  AutoHeight: =true
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(255, 0, 0, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =55
+                  Size: =10
+                  Text: ="Please fill all the fields"
+                  Visible: |
+                    =And(
+                        'Add Item_1'.DisplayMode = DisplayMode.Disabled,
+                        'Add Item_1'.Visible
+                    )
+                  Width: =201
+                  X: =871
+                  Y: =354
+            - ContainerAsset_1:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  Height: =300
+                  Visible: |
+                    =varAssetType = "Asset"
+                  Width: =1034
+                  X: =34
+                  Y: =163
+                Children:
+                  - Label_assetTag_16:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Text: ="Asset Tag"
+                        Visible: |
+                          =varAssetType = "Asset"
+                        Width: =95
+                        X: =510
+                        Y: =26
+                  - Label_serialNum_6:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Text: ="Serial Number"
+                        Visible: |
+                          =varAssetType = "Asset"
+                        Width: =132
+                        X: =510
+                        Y: =124
+                  - txtAssetTag_1:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        BorderThickness: =0
+                        Default: |+
+                          =If(varEditMode, varSelectedItem.AssetTag, Blank())
+                        Fill: =RGBA(240, 240, 240, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =41
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        RadiusBottomLeft: =10
+                        RadiusBottomRight: =10
+                        RadiusTopLeft: =10
+                        RadiusTopRight: =10
+                        Visible: |
+                          =varAssetType = "Asset"
+                        Width: =300
+                        X: =660
+                        Y: =25
+                  - txtSerial_1:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        BorderThickness: =0
+                        Default: |+
+                          =If(varEditMode, varSelectedItem.SerialNum, Blank())
+                        Fill: =RGBA(240, 240, 240, 1)
+                        Font: =Font.'Open Sans'
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        RadiusBottomLeft: =10
+                        RadiusBottomRight: =10
+                        RadiusTopLeft: =10
+                        RadiusTopRight: =10
+                        Visible: |
+                          =varAssetType = "Asset"
+                        Width: =300
+                        X: =660
+                        Y: =124
+                  - lblModelAsset_1:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Text: ="Model"
+                        Visible: |
+                          =varAssetType = "Asset"
+                        Width: =126
+                        X: =15
+                        Y: =227
+                  - lblItemAsset_1:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Text: ="Item"
+                        Visible: |
+                          =varAssetType = "Asset"
+                        Width: =126
+                        X: =15
+                        Y: =25
+                  - lblManufacturerAsset_1:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =41
+                        Text: |-
+                          ="Manufacturer
+                          "
+                        Visible: |
+                          =varAssetType = "Asset"
+                        Width: =126
+                        X: =15
+                        Y: =123
+                  - DropdownItemAsset_1:
+                      Control: Classic/DropDown@2.3.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        ChevronBackground: =RGBA(0, 20, 220, 1)
+                        ChevronFill: =RGBA(255, 255, 255, 1)
+                        ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                        ChevronHoverFill: =RGBA(255, 255, 255, 1)
+                        Default: |+
+                          =If(
+                              varEditMode,
+                              varSelectedItem.Items, 
+                              Blank()
+                          )
+                        Font: =Font.'Open Sans'
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Items: |
+                          =Distinct(
+                              Filter('IT Asset Lists', AssetType = varAssetType),
+                              AssetName
+                          )
+                        Items.Value: =Value
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(0, 18, 107, 1)
+                        SelectionColor: =RGBA(255, 255, 255, 1)
+                        SelectionFill: =RGBA(56, 96, 178, 1)
+                        Width: =300
+                        X: =175
+                        Y: =22
+                  - DropdownManufacturerAsset_1:
+                      Control: Classic/DropDown@2.3.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        ChevronBackground: =RGBA(0, 20, 220, 1)
+                        ChevronFill: =RGBA(255, 255, 255, 1)
+                        ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                        ChevronHoverFill: =RGBA(255, 255, 255, 1)
+                        Default: |+
+                          =If(
+                              varEditMode,
+                              varSelectedItem.assetBrand, 
+                              Blank()
+                          )
+                        Font: =Font.'Open Sans'
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Items: |
+                          =
+                          Distinct(
+                              Filter(
+                                  'IT Asset Lists',
+                                  AssetName = DropdownItemAsset_1.Selected.Value
+                              ),
+                              Manufacturer
+                          )
+                        Items.Value: =Value
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(0, 18, 107, 1)
+                        SelectionColor: =RGBA(255, 255, 255, 1)
+                        SelectionFill: =RGBA(56, 96, 178, 1)
+                        Width: =300
+                        X: =175
+                        Y: =123
+                  - DropdownModelAsset_1:
+                      Control: Classic/DropDown@2.3.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        ChevronBackground: =RGBA(0, 20, 220, 1)
+                        ChevronFill: =RGBA(255, 255, 255, 1)
+                        ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                        ChevronHoverFill: =RGBA(255, 255, 255, 1)
+                        Default: |
+                          =If(
+                              varEditMode,
+                              varSelectedItem.assetModel, 
+                              Blank()
+                          )
+                        Font: =Font.'Open Sans'
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Items: |
+                          =Distinct(
+                              Filter(
+                                  'IT Asset Lists',
+                                  AssetName = DropdownItemAsset_1.Selected.Value &&
+                                  Manufacturer = DropdownManufacturerAsset_1.Selected.Value
+                              ),
+                              Model
+                          )
+                        Items.Value: =Value
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(0, 18, 107, 1)
+                        SelectionColor: =RGBA(255, 255, 255, 1)
+                        SelectionFill: =RGBA(56, 96, 178, 1)
+                        Width: =300
+                        X: =175
+                        Y: =224
+            - ContainerNonAsset_1:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.None
+                  Height: =300
+                  Visible: |
+                    =varAssetType = "Non Asset"
+                  Width: =1034
+                  X: =34
+                  Y: =163
+                Children:
+                  - Label_assetTag_22:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Text: |-
+                          ="Quantity
+                          "
+                        Visible: |
+                          =varAssetType = "Non Asset"
+                        Width: =95
+                        X: =505
+                        Y: =25
+                  - Label_assetTag_23:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Text: ="Model"
+                        Visible: |
+                          =varAssetType = "Non Asset"
+                        Width: =74
+                        X: =15
+                        Y: =227
+                  - Label_Name_13:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Text: ="Item"
+                        Visible: |
+                          =varAssetType = "Non Asset"
+                        Width: =102
+                        X: =15
+                        Y: =25
+                  - Label_assetTag_24:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =41
+                        Text: |-
+                          ="Manufacturer
+                          "
+                        Visible: |
+                          =varAssetType = "Non Asset"
+                        Width: =126
+                        X: =15
+                        Y: =125
+                  - txtQuantity_3:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        BorderThickness: =0
+                        Default: |+
+                          =If(varEditMode, varSelectedItem.Quantity, Blank())
+                        Fill: =RGBA(240, 240, 240, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =41
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        RadiusBottomLeft: =10
+                        RadiusBottomRight: =10
+                        RadiusTopLeft: =10
+                        RadiusTopRight: =10
+                        Visible: |
+                          =varAssetType = "Non Asset"
+                        Width: =300
+                        X: =661
+                        Y: =25
+                  - DropdownItemNonAsset_1:
+                      Control: Classic/DropDown@2.3.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        ChevronBackground: =RGBA(0, 20, 220, 1)
+                        ChevronFill: =RGBA(255, 255, 255, 1)
+                        ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                        ChevronHoverFill: =RGBA(255, 255, 255, 1)
+                        Default: |+
+                          =If(
+                              varEditMode,
+                              varSelectedItem.Items,   // or .Model, .Brand etc.
+                              Blank()
+                          )
+                        Font: =Font.'Open Sans'
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Items: |
+                          =Distinct(
+                              Filter('IT Asset Lists', AssetType = varAssetType),
+                              AssetName
+                          )
+                        Items.Value: =Value
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(0, 18, 107, 1)
+                        SelectionColor: =RGBA(255, 255, 255, 1)
+                        SelectionFill: =RGBA(56, 96, 178, 1)
+                        Width: =300
+                        X: =175
+                        Y: =25
+                  - DropdownManufacturerNonAsset_1:
+                      Control: Classic/DropDown@2.3.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        ChevronBackground: =RGBA(0, 20, 220, 1)
+                        ChevronFill: =RGBA(255, 255, 255, 1)
+                        ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                        ChevronHoverFill: =RGBA(255, 255, 255, 1)
+                        Default: |+
+                          =If(
+                              varEditMode,
+                              varSelectedItem.assetBrand, 
+                              Blank()
+                          )
+                        Font: =Font.'Open Sans'
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Items: |
+                          =
+                          Distinct(
+                              Filter(
+                                  'IT Asset Lists',
+                                  AssetName = DropdownItemNonAsset_1.Selected.Value
+                              ),
+                              Manufacturer
+                          )
+                        Items.Value: =Value
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(0, 18, 107, 1)
+                        SelectionColor: =RGBA(255, 255, 255, 1)
+                        SelectionFill: =RGBA(56, 96, 178, 1)
+                        Width: =300
+                        X: =175
+                        Y: =126
+                  - DropdownModelNonAsset_1:
+                      Control: Classic/DropDown@2.3.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        ChevronBackground: =RGBA(0, 20, 220, 1)
+                        ChevronFill: =RGBA(255, 255, 255, 1)
+                        ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                        ChevronHoverFill: =RGBA(255, 255, 255, 1)
+                        Default: |
+                          =If(
+                              varEditMode,
+                              varSelectedItem.assetModel, 
+                              Blank()
+                          )
+                        Font: =Font.'Open Sans'
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Items: |
+                          =Distinct(
+                              Filter(
+                                  'IT Asset Lists',
+                                  AssetName = DropdownItemNonAsset_1.Selected.Value &&
+                                  Manufacturer = DropdownManufacturerNonAsset_1.Selected.Value
+                              ),
+                              Model
+                          )
+                        Items.Value: =Value
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(0, 18, 107, 1)
+                        SelectionColor: =RGBA(255, 255, 255, 1)
+                        SelectionFill: =RGBA(56, 96, 178, 1)
+                        Width: =300
+                        X: =175
+                        Y: =227
+            - Add Item_1:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  DisplayMode: |
+                    =If(
+                        varAssetType = "Asset",
+                        If(
+                            IsBlank(DropdownItemAsset_1.Selected.Value) ||
+                            IsBlank(DropdownManufacturerAsset_1.Selected.Value) ||
+                            IsBlank(DropdownModelAsset_1.Selected.Value) ||
+                            IsBlank('txtAssetTag_1'.Text) ||
+                            IsBlank('txtSerial_1'.Text),
+                            DisplayMode.Disabled,
+                            DisplayMode.Edit
+                        ),
+                        If(
+                            IsBlank(DropdownItemNonAsset_1.Selected.Value) ||
+                            IsBlank(DropdownManufacturerNonAsset_1.Selected.Value) ||
+                            IsBlank(DropdownModelNonAsset_1.Selected.Value) ||
+                            IsBlank('txtQuantity_3'.Text),
+                            DisplayMode.Disabled,
+                            DisplayMode.Edit
+                        )
+                    )
+                  Fill: =RGBA(56, 96, 178, 1)
+                  Font: =Font.'Open Sans'
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                  OnSelect: |-
+                    =If(
+                        varAssetType = "Asset",
+                        // ASSET logic
+                        Collect(
+                            colNewItems,
+                            {
+                                UID: Text(
+                                    Now(),
+                                    "yyyymmddhhmmssfff"
+                                ),
+                                caseNo: varSelectedCase.ID,
+                                assetType: "Asset",
+                                Items: DropdownItemAsset_1.Selected.Value,
+                                assetModel: DropdownModelAsset_1.Selected.Value,
+                                assetBrand: DropdownManufacturerAsset_1.Selected.Value,
+                                SerialNum: txtSerial_1.Text,
+                                AssetTag: txtAssetTag_1.Text,
+                                Quantity: "-"
+                            }
+                        );
+                        //Reset('DropdownItem-Asset_1');
+                        //Reset('DropdownModel-Asset_1');
+                        //Reset('DropdownManufacturer-Asset_1');
+                        Reset(txtSerial_1);
+                        Reset(txtAssetTag_1),
+                        // NON ASSET logic
+                        Collect(
+                            colNewItems,
+                            {
+                                uid: Text(
+                                    Now(),
+                                    "yyyymmddhhmmssfff"
+                                ),
+                                caseNo: varSelectedCase.ID,
+                                assetType: "Non Asset",
+                                Items: DropdownItemNonAsset_1.Selected.Value,
+                                assetModel: DropdownModelNonAsset_1.Selected.Value,
+                                assetBrand: DropdownManufacturerNonAsset_1.Selected.Value,
+                                Quantity: txtQuantity_3.Text,
+                                SerialNum: "-",
+                                AssetTag: "-"
+                            }
+                        );
+                        //Reset('DropdownItem-NonAsset_1');
+                        //Reset('DropdownModel-NonAsset_1');
+                        //Reset('DropdownManufacturer-NonAsset_1');
+                        Reset(txtQuantity_3)
+                    );
+                    // After If block: Update combined collection for display
+                    ClearCollect(
+                        colCombinedAssets,
+                        colSharePointItems,
+                        colNewItems
+                    )
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  Text: ="Add Item"
+                  Visible: =!varEditMode
+                  X: =892
+                  Y: =387
+            - Label16_2:
+                Control: Label@2.5.1
+                Properties:
+                  AutoHeight: =true
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(255, 0, 0, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =55
+                  Size: =15
+                  Text: ="Dont forget to save your newly added data"
+                  Visible: |
+                    =ButtonSaveDraft.DisplayMode = DisplayMode.Edit
+                  Width: =451
+                  X: =69
+                  Y: =908
+            - Icon4:
+                Control: Classic/Icon@2.5.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(0, 20, 220, 1)
+                  Height: =42
+                  Icon: =Icon.BackArrow
+                  OnSelect: |+
+                    =Set(varConfirmDraft, true)
+                  Width: =42
+                  X: =27
+                  Y: =13
+            - Label5:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =34
+                  Text: ="You may click on any item to edit via the form above"
+                  Underline: =true
+                  Width: =644
+                  X: =238
+                  Y: =447
+            - IconReset:
+                Control: Classic/Icon@2.5.0
+                Group: Exit Edit Mode Button
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(0, 18, 107, 1)
+                  Height: =40
+                  Icon: =Icon.Reset
+                  OnSelect: |+
+                    =
+                    Set(varSelectedItem, Blank());
+                    Set(varEditMode, false);
+                  Visible: |-
+                    =If(
+                        varEditMode,
+                        true,
+                        false
+                    )
+                  Width: =41
+                  X: =813
+                  Y: =387
+            - Label17:
+                Control: Label@2.5.1
+                Group: Exit Edit Mode Button
+                Properties:
+                  AutoHeight: =true
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =32
+                  OnSelect: |+
+                    =
+                    Set(varSelectedItem, Blank());
+                    Set(varEditMode, false);
+                  Text: ="Exit Edit Mode"
+                  Visible: |-
+                    =If(
+                        varEditMode,
+                        true,
+                        false
+                    )
+                  Width: =130
+                  X: =671
+                  Y: =392
+            - Button4:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  DisplayMode: |+
+                    =If(
+                        !IsBlank(varSelectedItem) &&
+                        (
+                            // Asset-type fields
+                            (
+                                varAssetType = "Asset" &&
+                                (
+                                    DropdownItemAsset_1.Selected.Value <> varSelectedItem.Items ||
+                                    DropdownManufacturerAsset_1.Selected.Value <> varSelectedItem.assetBrand ||
+                                    DropdownModelAsset_1.Selected.Value <> varSelectedItem.assetModel ||
+                                    txtSerial_1.Text <> varSelectedItem.SerialNum ||
+                                    txtAssetTag_1.Text <> varSelectedItem.AssetTag
+                                )
+                            ) ||
+
+                            // Non-Asset-type fields
+                            (
+                                varAssetType = "Non Asset" &&
+                                (
+                                    DropdownItemNonAsset_1.Selected.Value <> varSelectedItem.Items ||
+                                    DropdownManufacturerNonAsset_1.Selected.Value <> varSelectedItem.assetBrand ||
+                                    DropdownModelNonAsset_1.Selected.Value <> varSelectedItem.assetModel ||
+                                    txtQuantity_3.Text <> varSelectedItem.Quantity
+                                )
+                            )
+                        ),
+                        DisplayMode.Edit,
+                        DisplayMode.Disabled
+                    )
+                  Fill: =RGBA(0, 20, 220, 1)
+                  Font: =Font.'Open Sans'
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: |-
+                    =ColorFade(
+                        RGBA(
+                            0,
+                            20,
+                            220,
+                            100
+                        ),
+                        -20%
+                    )
+                  OnSelect: |+
+                    =// Step 1: Remove the original item from both collections
+                    RemoveIf(colCombinedAssets, UID = varItemToEditUID);
+                    RemoveIf(colNewItems, UID = varItemToEditUID);
+
+                    // Step 2: Create the updated record in a variable
+                    Set(
+                        varUpdatedItem,
+                        If(
+                            varAssetType = "Asset",
+                            {
+                                UID: varItemToEditUID,
+                                assetType: "Asset",
+                                Items: DropdownItemAsset_1.Selected.Value,
+                                assetBrand: DropdownManufacturerAsset_1.Selected.Value,
+                                assetModel: DropdownModelAsset_1.Selected.Value,
+                                SerialNum: txtSerial_1.Text,
+                                AssetTag: txtAssetTag_1.Text,
+                                Quantity: "-",
+                                isEdited: true
+                            },
+                            {
+                                UID: varItemToEditUID,
+                                assetType: "Non Asset",
+                                Items: DropdownItemNonAsset_1.Selected.Value,
+                                assetBrand: DropdownManufacturerNonAsset_1.Selected.Value,
+                                assetModel: DropdownModelNonAsset_1.Selected.Value,
+                                SerialNum: "-",
+                                AssetTag: "-",
+                                Quantity: txtQuantity_3.Text,
+                                isEdited: true
+                            }
+                        )
+                    );
+
+                    // Step 3: Add updated record back to collections
+                    Collect(colCombinedAssets, varUpdatedItem);
+                    Collect(colNewItems, varUpdatedItem);
+
+                    // Step 4: Cleanup
+                    Set(varSelectedItem, Blank());
+
+                    //Step 5: Enable Editing Flag
+                    Set(varHasEditedOnce, true);
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  Text: ="Publish Edits"
+                  Visible: |+
+                    =varEditMode
+                  X: =892
+                  Y: =387
+            - Checkbox1:
+                Control: Classic/CheckBox@2.1.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  CheckboxBorderColor: =RGBA(0, 18, 107, 1)
+                  CheckmarkFill: =RGBA(0, 0, 0, 1)
+                  Font: =Font.'Open Sans'
+                  HoverBorderColor: =Color.Transparent
+                  HoverColor: =RGBA(0, 0, 0, 1)
+                  PressedBorderColor: =Color.Transparent
+                  PressedColor: =RGBA(0, 0, 0, 1)
+                  Text: ="Have the new items updated in ESM?"
+                  Visible: |+
+                    =ButtonSaveDraft.DisplayMode = DisplayMode.Edit
+                  Width: =208
+                  X: =655
+                  Y: =898
+            - Button7:
+                Control: Classic/Button@2.2.0
+                Group: Exit Edit Mode Button
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                  DisabledColor: =RGBA(0, 0, 0, 0)
+                  Fill: =RGBA(0, 0, 0, 0)
+                  Font: =Font.'Open Sans'
+                  HoverBorderColor: =Color.Transparent
+                  HoverColor: =RGBA(0, 0, 0, 0)
+                  HoverFill: =Color.Transparent
+                  OnSelect: |+
+                    =
+                    Set(varSelectedItem, Blank());
+                    Set(varEditMode, false);
+                  PressedBorderColor: =Color.Transparent
+                  PressedColor: =Color.Transparent
+                  PressedFill: =Color.Transparent
+                  Text: =
+                  Visible: |-
+                    =If(
+                        varEditMode,
+                        true,
+                        false
+                    )
+                  Width: =183
+                  X: =671
+                  Y: =387
+            - ButtonSave_11:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  Fill: =RGBA(0, 20, 220, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =39
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: |
+                    =ColorFade(Self.Fill, -0.2)
+                  OnSelect: |-
+                    =Set(varPopupAddWatchlist, true);
+                    Set(varEditDraft, true)
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  RadiusBottomLeft: =100
+                  RadiusBottomRight: =100
+                  RadiusTopLeft: =100
+                  RadiusTopRight: =100
+                  Text: ="Add Watchlist"
+                  X: =694
+                  Y: =388
+      - Container3:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Properties:
+            Fill: =RGBA(0, 20, 220, 1)
+            Height: =52
+            RadiusBottomLeft: |+
+              =100
+            RadiusBottomRight: |+
+              =100
+            Width: =1454
+            X: =366
+          Children:
+            - Label19:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Height: =52
+                  Size: =20
+                  Text: ="View Request"
+                  Width: =1454
+      - ContainerViewList:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.Semibold
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =971
+            RadiusBottomLeft: =10
+            RadiusBottomRight: =10
+            RadiusTopLeft: =10
+            RadiusTopRight: =10
+            Visible: =varItemList
+            Width: =1098
+            X: =791
+            Y: =87
+          Children:
+            - Rectangle5_5:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(214, 221, 224, 1)
+                  Height: =51
+                  Width: =1097
+            - Label12_5:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =47
+                  Size: =16
+                  Text: ="Case ID - " & varSelectedCase.ID
+                  Width: =190
+                  X: =453
+                  Y: =4
+            - Gallery4_5:
+                Control: Gallery@2.15.0
+                Variant: Vertical
+                Properties:
+                  BorderColor: =RGBA(214, 221, 224, 1)
+                  Height: =708
+                  Items: =Filter('ITAssetDisposal-Item',caseNo = Text(varSelectedCase.ID))
+                  OnSelect: =
+                  TemplateSize: =110
+                  Width: =1053
+                  X: =10
+                  Y: =115
+                Children:
+                  - Container11_3:
+                      Control: GroupContainer@1.3.0
+                      Variant: ManualLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Height: =46
+                        PaddingRight: |+
+                          =0
+
+                        RadiusBottomLeft: |
+                          =0
+                        RadiusBottomRight: |
+                          =100
+                        Width: =131
+                      Children:
+                        - Label8_53:
+                            Control: Label@2.5.1
+                            Properties:
+                              Align: =Align.Center
+                              BorderColor: =RGBA(0, 18, 107, 1)
+                              Color: =RGBA(255, 255, 255, 1)
+                              Fill: =RGBA(0, 20, 220, 1)
+                              Font: =Font.'Open Sans'
+                              FontWeight: =FontWeight.Semibold
+                              Height: =46
+                              OnSelect: |
+                                =false
+                              Text: =ThisItem.assetType
+                              Width: =131
+                  - Container1:
+                      Control: GroupContainer@1.3.0
+                      Variant: ManualLayout
+                      Properties:
+                        Height: =108
+                        Width: =1039
+                      Children:
+                        - Label8_32:
+                            Control: Label@2.5.1
+                            Properties:
+                              Align: =Align.Center
+                              AutoHeight: =true
+                              BorderColor: =RGBA(0, 18, 107, 1)
+                              Font: =Font.'Open Sans'
+                              Height: =67
+                              Text: =ThisItem.Items
+                              Width: =143
+                              X: =157
+                              Y: =Parent.Height/2 - Self.Height/2
+                        - Label8_33:
+                            Control: Label@2.5.1
+                            Properties:
+                              Align: =Align.Center
+                              AutoHeight: =true
+                              BorderColor: =RGBA(0, 18, 107, 1)
+                              Font: =Font.'Open Sans'
+                              Text: =ThisItem.AssetTag
+                              Width: =105
+                              X: =300
+                              Y: =Parent.Height/2 - Self.Height/2
+                        - Rectangle6_4:
+                            Control: Rectangle@2.3.0
+                            Properties:
+                              BorderColor: =RGBA(0, 18, 107, 1)
+                              Fill: =RGBA(214, 221, 224, 1)
+                              Height: =3
+                              Width: =1039
+                              Y: =105
+                        - Label7_2:
+                            Control: Label@2.5.1
+                            Properties:
+                              Align: =Align.Center
+                              AutoHeight: =true
+                              BorderColor: =RGBA(0, 18, 107, 1)
+                              Font: =Font.'Open Sans'
+                              Height: =32
+                              Text: =ThisItem.SerialNum
+                              Width: =130
+                              X: =431
+                              Y: =Parent.Height/2 - Self.Height/2
+                        - Label8_34:
+                            Control: Label@2.5.1
+                            Properties:
+                              Align: =Align.Center
+                              AutoHeight: =true
+                              BorderColor: =RGBA(0, 18, 107, 1)
+                              Font: =Font.'Open Sans'
+                              Text: =ThisItem.assetModel
+                              Width: =146
+                              X: =710
+                              Y: =Parent.Height/2 - Self.Height/2
+                        - Label8_35:
+                            Control: Label@2.5.1
+                            Properties:
+                              Align: =Align.Center
+                              AutoHeight: =true
+                              BorderColor: =RGBA(0, 18, 107, 1)
+                              Font: =Font.'Open Sans'
+                              Text: =ThisItem.assetBrand
+                              Width: =105
+                              X: =583
+                              Y: =Parent.Height/2 - Self.Height/2
+                        - Label8_52:
+                            Control: Label@2.5.1
+                            Properties:
+                              Align: =Align.Center
+                              AutoHeight: =true
+                              BorderColor: =RGBA(0, 18, 107, 1)
+                              Font: =Font.'Open Sans'
+                              Text: =ThisItem.Quantity
+                              Width: =146
+                              X: =880
+                              Y: =Parent.Height/2 - Self.Height/2
+            - Label8_36:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Text: ="Device"
+                  Width: =105
+                  X: =186
+                  Y: =75
+            - Label8_37:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Text: ="Asset Tag"
+                  Width: =105
+                  X: =328
+                  Y: =75
+            - Label8_38:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Text: ="Manufacturer"
+                  Width: =134
+                  X: =600
+                  Y: =75
+            - Label7_3:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Text: ="Serial"
+                  Width: =107
+                  X: =475
+                  Y: =75
+            - Label8_40:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Text: ="Model"
+                  Width: =105
+                  X: =766
+                  Y: =75
+            - Icon8:
+                Control: Classic/Icon@2.5.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(0, 0, 0, 1)
+                  Height: =51
+                  Icon: =Icon.Edit
+                  OnSelect: |+
+                    =Set(varEditDraft, true);
+                    Set(varItemList, false);
+                    Set(varEditMode, false);
+                    Set(varAssetType, "Asset");
+
+                    // Refresh combined items with unsaved ones
+                    ClearCollect(
+                        colCombinedAssets,
+                        colSharePointItems,
+                        colNewItems
+                    );
+                  Visible: |+
+                    =varSelectedCase.Status = "Draft"
+                  Width: =49
+                  X: =429
+                  Y: =882
+            - Label8_51:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Text: ="Quantity"
+                  Width: =105
+                  X: =929
+                  Y: =75
+            - Container6_1:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  Fill: =RGBA(214, 221, 224, 1)
+                  Height: =40
+                  RadiusBottomLeft: =20
+                  RadiusBottomRight: =20
+                  RadiusTopLeft: =20
+                  RadiusTopRight: =20
+                  Width: =385
+                  X: =24
+                  Y: =888
+                Children:
+                  - Label8_54:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Bold
+                        Height: =30
+                        Text: |-
+                          ="Total Asset = " & CountRows(
+                              Filter(colCombinedAssets, assetType = "Asset")
+                          )
+                        Width: =160
+                        X: =207
+                        Y: =4
+                  - Label8_55:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Bold
+                        Height: =30
+                        Text: |-
+                          ="Total Non Asset = " & CountRows(
+                              Filter(colCombinedAssets, assetType = "Non Asset")
+                          )
+                        Width: =195
+                        X: =12
+                        Y: =4
+            - Label3_2:
+                Control: Label@2.5.1
+                Group: GroupApprover
+                Properties:
+                  AutoHeight: =true
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =35
+                  Text: |
+                    =If(
+                        varSelectedCase.Status = "Pending 1st Level Approval",
+                        varLocationApprover.'1st Approver Name',
+                        If(
+                            varSelectedCase.Status = "Pending 2nd Level Approval",
+                            varLocationApprover.'2nd Approver Name',
+                            ""
+                        )
+                    )
+                  Visible: |+
+                    =varSelectedCase.Status in ["Pending 1st Level Approval", "Pending 2nd Level Approval"]
+                  Width: =344
+                  X: =718
+                  Y: =891
+            - Label3_3:
+                Control: Label@2.5.1
+                Group: GroupApprover
+                Properties:
+                  AutoHeight: =true
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =48
+                  Text: |
+                    =If(
+                        varSelectedCase.Status = "Pending 1st Level Approval",
+                        varLocationApprover.'1st Approver Email',
+                        If(
+                            varSelectedCase.Status = "Pending 2nd Level Approval",
+                            varLocationApprover.'2nd Approver Email',
+                            ""
+                        )
+                    )
+                  Visible: |+
+                    =varSelectedCase.Status in ["Pending 1st Level Approval", "Pending 2nd Level Approval"]
+                  Width: =344
+                  X: =718
+                  Y: =926
+            - Image1_2:
+                Control: Image@2.2.3
+                Group: GroupApprover
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 1)
+                  BorderThickness: =1
+                  Image: |
+                    =IfError(
+                        Office365Users.UserPhotoV2(Label3_3.Text),
+                        nouserimage
+                    )
+                  RadiusBottomLeft: =50
+                  RadiusBottomRight: =50
+                  RadiusTopLeft: =50
+                  RadiusTopRight: =50
+                  Visible: |+
+                    =varSelectedCase.Status in ["Pending 1st Level Approval", "Pending 2nd Level Approval"]
+                  X: =605
+                  Y: =858
+            - Label2:
+                Control: Label@2.5.1
+                Group: GroupApprover
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Text: ="Current Approver"
+                  Visible: |+
+                    =varSelectedCase.Status in ["Pending 1st Level Approval", "Pending 2nd Level Approval"]
+                  Width: =230
+                  X: =718
+                  Y: =848
+            - Add Item_5:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  Fill: =RGBA(0, 20, 220, 1)
+                  Font: =Font.'Open Sans'
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                  OnSelect: =Set(varConfirmSubmissionToApprovers, true)
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  Text: ="Submit"
+                  Visible: =varSelectedCase.Status = "Draft"
+                  X: =901
+                  Y: =887
+      - Rectangle2:
+          Control: Rectangle@2.3.0
+          Group: GroupAreYouSureSubmitThisCase
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 0, 0, 0.6)
+            Height: =1080
+            Visible: =varConfirmSubmissionToApprovers
+            Width: =1920
+      - ContainerAddWatchlist_1:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Properties:
+            DropShadow: =DropShadow.Regular
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =971
+            RadiusBottomLeft: =30
+            RadiusBottomRight: =30
+            RadiusTopLeft: =30
+            RadiusTopRight: =30
+            Visible: =varPopupAddWatchlist
+            Width: =749
+            X: =30
+            Y: =87
+          Children:
+            - Rectangle5_3:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(214, 221, 224, 1)
+                  Height: =61
+                  Width: =749
+            - Icon5_2:
+                Control: Classic/Icon@2.5.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(0, 20, 220, 1)
+                  Height: =42
+                  Icon: =Icon.CancelBadge
+                  OnSelect: |
+                    =Set(varPopupAddWatchlist, false);
+                  Width: =42
+                  X: =40
+                  Y: =9
+            - Add Item_10:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  DisplayMode: |
+                    =If(
+                        !IsBlank(DropdownEmailRequestorWatchlist_1.Selected.Value) && 
+                        !IsBlank(LabelNameRequestorWatchlist_1.Text),
+                        DisplayMode.Edit,
+                        DisplayMode.Disabled
+                    )
+                  Fill: =RGBA(0, 20, 220, 1)
+                  Font: =Font.'Open Sans'
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: |
+                    =ColorFade(Self.Fill, -0.2)
+                  OnSelect: |-
+                    =// Step 2: Add to SharePoint list
+                    Patch(
+                        'ITAssetDisposal-Watchlists',
+                        Defaults('ITAssetDisposal-Watchlists'),
+                        {
+                            caseID: Text(varSelectedCase.ID), // If SharePoint column is text; remove Text() if it's a number
+                            UID: Text(Now(), "yyyymmddhhmmssfff"),
+                            WatchlistEmail: DropdownEmailRequestorWatchlist_1.Selected.Value,
+                            WatchlistName: LabelNameRequestorWatchlist_1.Text
+                        }
+                    )
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  Text: ="Add"
+                  X: =294
+                  Y: =362
+            - GalleryWatchlist_1:
+                Control: Gallery@2.15.0
+                Variant: Vertical
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  BorderThickness: =1
+                  Height: =380
+                  Items: |+
+                    =Filter(
+                        'ITAssetDisposal-Watchlists',
+                        caseID = Text(varSelectedCase.ID)
+                    )
+                  NavigationStep: |
+                    =1
+                  ShowScrollbar: =false
+                  TemplateSize: =156
+                  Width: =523
+                  X: =113
+                  Y: =429
+                Children:
+                  - Label8_4:
+                      Control: Label@2.5.1
+                      Properties:
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =33
+                        OnSelect: =Select(Parent)
+                        Text: =ThisItem.WatchlistEmail
+                        Width: =276
+                        X: =152
+                        Y: =73
+                  - Label8_21:
+                      Control: Label@2.5.1
+                      Properties:
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =33
+                        OnSelect: =Select(Parent)
+                        Text: |+
+                          =ThisItem.WatchlistName
+                        Width: =276
+                        X: =151
+                        Y: =20
+                  - Label13_21:
+                      Control: Label@2.5.1
+                      Properties:
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Bold
+                        Height: =32
+                        OnSelect: =Select(Parent)
+                        Text: ="Name"
+                        Width: =66
+                        X: =69
+                        Y: =20
+                  - Label13_22:
+                      Control: Label@2.5.1
+                      Properties:
+                        AutoHeight: =true
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Bold
+                        Height: =32
+                        OnSelect: =Select(Parent)
+                        Text: ="Email"
+                        Width: =66
+                        X: =69
+                        Y: =73
+                  - Rectangle11_4:
+                      Control: Rectangle@2.3.0
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Fill: =RGBA(214, 221, 224, 1)
+                        Height: =8
+                        OnSelect: =Select(Parent)
+                        Width: =512
+                        X: =1
+                        Y: =148
+                  - Icon10_4:
+                      Control: Classic/Icon@2.5.0
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Color: =RGBA(0, 18, 107, 1)
+                        Height: =53
+                        Icon: =Icon.Trash
+                        OnSelect: |
+                          =Set(varItemToDeleteUID, ThisItem.UID);
+                          Set(varShowDeletePopup, true)
+                        Width: =47
+                        X: =449
+                        Y: =36
+                  - Container11_6:
+                      Control: GroupContainer@1.3.0
+                      Variant: ManualLayout
+                      Properties:
+                        DropShadow: =DropShadow.None
+                        Height: =125
+                        PaddingRight: |+
+                          =0
+
+                        RadiusBottomLeft: |+
+                          =0
+
+
+                        RadiusBottomRight: |
+                          =100
+                        RadiusTopRight: |+
+                          =0
+
+                        Width: =37
+                      Children:
+                        - Label8_66:
+                            Control: Label@2.5.1
+                            Properties:
+                              Align: =Align.Center
+                              BorderColor: =RGBA(0, 18, 107, 1)
+                              Color: =RGBA(255, 255, 255, 1)
+                              Fill: =RGBA(0, 20, 220, 1)
+                              Font: =Font.'Open Sans'
+                              FontWeight: =FontWeight.Semibold
+                              Height: =127
+                              OnSelect: |
+                                =false
+                              Text: |+
+                                =
+                              Width: =36
+                  - Container Delete Confirmation_4:
+                      Control: GroupContainer@1.3.0
+                      Variant: ManualLayout
+                      Properties:
+                        BorderColor: =RGBA(255, 0, 0, 1)
+                        BorderThickness: =5
+                        DropShadow: =DropShadow.None
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Height: =198
+                        RadiusBottomLeft: =0
+                        RadiusBottomRight: =0
+                        RadiusTopLeft: =0
+                        RadiusTopRight: =0
+                        Visible: |
+                          =varShowDeletePopup && ThisItem.UID = varItemToDeleteUID
+                        Width: =513
+                      Children:
+                        - Label15_4:
+                            Control: Label@2.5.1
+                            Properties:
+                              Align: =Align.Center
+                              BorderColor: =RGBA(0, 18, 107, 1)
+                              Font: =Font.'Open Sans'
+                              FontWeight: =FontWeight.Semibold
+                              Height: =78
+                              Size: =15
+                              Text: ="Are you sure you want to delete this data?"
+                              Width: =229
+                              X: =Parent.Width/2 - Self.Width/2
+                              Y: =45
+                        - ButtonSave_9:
+                            Control: Classic/Button@2.2.0
+                            Properties:
+                              BorderColor: =ColorFade(Self.Fill, -15%)
+                              Color: =RGBA(255, 255, 255, 1)
+                              DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                              DisplayMode: =
+                              Fill: =RGBA(122, 138, 143, 1)
+                              Font: =Font.'Open Sans'
+                              HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                              HoverColor: =RGBA(255, 255, 255, 1)
+                              HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                              OnSelect: |
+                                =Set(varShowDeletePopup, false)
+                              PressedBorderColor: =Self.Fill
+                              PressedColor: =Self.Fill
+                              PressedFill: =Self.Color
+                              Text: ="Cancel"
+                              X: =298
+                              Y: =146
+                        - ButtonSave_12:
+                            Control: Classic/Button@2.2.0
+                            Properties:
+                              BorderColor: =ColorFade(Self.Fill, -15%)
+                              Color: =RGBA(255, 255, 255, 1)
+                              DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                              DisplayMode: =
+                              Fill: =RGBA(215, 58, 60, 1)
+                              Font: =Font.'Open Sans'
+                              HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                              HoverColor: =RGBA(255, 255, 255, 1)
+                              HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                              OnSelect: |
+                                =// Step 1: Remove from SharePoint by UID
+                                RemoveIf(
+                                    'ITAssetDisposal-Watchlists',
+                                    UID = varItemToDeleteUID
+                                );
+
+
+                                // Step 2: Close the delete confirmation popup
+                                Set(varShowDeletePopup, false);
+                              PressedBorderColor: =Self.Fill
+                              PressedColor: =Self.Fill
+                              PressedFill: =Self.Color
+                              Text: ="Yes"
+                              X: =50
+                              Y: =146
+                        - Icon11_8:
+                            Control: Classic/Icon@2.5.0
+                            Properties:
+                              BorderColor: =RGBA(0, 18, 107, 1)
+                              Color: =RGBA(255, 0, 0, 1)
+                              Height: =56
+                              Icon: =Icon.Warning
+                              Width: =50
+                              X: =15
+                              Y: =56
+                        - Icon11_9:
+                            Control: Classic/Icon@2.5.0
+                            Properties:
+                              BorderColor: =RGBA(0, 18, 107, 1)
+                              Color: =RGBA(255, 0, 0, 1)
+                              Height: =56
+                              Icon: =Icon.Warning
+                              Width: =50
+                              X: =441
+                              Y: =56
+            - Label9_4:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  AutoHeight: =true
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =52
+                  Size: =18
+                  Text: ="Do you want to add someone else to edit your list?"
+                  Width: =749
+                  Y: =103
+            - Container6_4:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  Fill: =RGBA(122, 138, 143, 1)
+                  Height: =33
+                  RadiusBottomLeft: =20
+                  RadiusBottomRight: =20
+                  RadiusTopLeft: =20
+                  RadiusTopRight: =20
+                  Width: =177
+                  X: =286
+                  Y: =867
+                Children:
+                  - Label14_3:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Color: =RGBA(255, 255, 255, 1)
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =33
+                        Text: |
+                          ="Total Watchlist: " & CountRows(GalleryWatchlist_1.AllItems)
+                        Width: =176
+            - Label9_5:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  AutoHeight: =true
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(255, 0, 0, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =125
+                  Text: ="If their name is not shown, request the user to login into the app for the first time"
+                  Width: =625
+                  X: =62
+                  Y: =153
+            - DropdownEmailRequestorWatchlist_1:
+                Control: Classic/DropDown@2.3.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  ChevronBackground: =RGBA(0, 20, 220, 1)
+                  ChevronFill: =RGBA(255, 255, 255, 1)
+                  ChevronHoverBackground: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                  ChevronHoverFill: =RGBA(255, 255, 255, 1)
+                  Font: =Font.'Open Sans'
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  Items: =Distinct(Requestor, Email)
+                  Items.Value: =Value
+                  PressedColor: =RGBA(255, 255, 255, 1)
+                  PressedFill: =RGBA(0, 18, 107, 1)
+                  SelectionColor: =RGBA(255, 255, 255, 1)
+                  SelectionFill: =RGBA(56, 96, 178, 1)
+                  Width: =400
+                  X: =174
+                  Y: =233
+            - LabelNameRequestorWatchlist_1:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(235, 237, 237, 1)
+                  Font: =Font.'Open Sans'
+                  PaddingLeft: =25
+                  Text: |
+                    =LookUp(
+                        Requestor,
+                        Email = DropdownEmailRequestorWatchlist_1.Selected.Value,
+                        Name
+                    )
+                  Width: =400
+                  X: =174
+                  Y: =296
+      - ContainerConfirmSubmissionToApprovers:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Group: GroupAreYouSureSubmitThisCase
+          Properties:
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =399
+            RadiusBottomLeft: =50
+            RadiusBottomRight: =50
+            RadiusTopLeft: =50
+            RadiusTopRight: =50
+            Visible: =varConfirmSubmissionToApprovers
+            Width: =1096
+            X: =Parent.Width/2 - Self.Width/2
+            Y: =Parent.Height/2 - Self.Height/2
+          Children:
+            - Label18:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  AutoHeight: =true
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(255, 0, 0, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Size: =20
+                  Text: |-
+                    ="Are you sure you want to submit this case to your approvers?
+
+                    Once you have submitted this case, you wont be able to edit this case until its rejected."
+                  Width: =602
+                  X: =246
+                  Y: =72
+            - Add Item_4:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  Fill: =RGBA(255, 0, 0, 1)
+                  Font: =Font.'Open Sans'
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                  OnSelect: |+
+                    =Patch(
+                        'ITAssetDisposal-Case',
+                        LookUp('ITAssetDisposal-Case', ID = varSelectedCase.ID),
+                        {
+                            Status: "Pending 1st Level Approval"
+                        }
+                    );
+
+                    // Step 0: Refresh SharePoint data to ensure latest items
+                    Refresh('ITAssetDisposal-Item');
+
+                    // Step 1: Clear colNewItems (unsaved local items)
+                    Clear(colNewItems);
+
+                    // Step 2: Rebuild colSharePointItems with fresh data
+                    ClearCollect(
+                        colSharePointItems,
+                        Filter(
+                            'ITAssetDisposal-Item',
+                            caseNo = Text(varSelectedCase.ID)
+                        )
+                    );
+
+                    // Step 3: Rebuild combined gallery data
+                    ClearCollect(
+                        colCombinedAssets,
+                        colSharePointItems
+                    );
+
+
+                    // Step 4: Close popup
+                    Set(varPopupAsset, false);
+                    Set(varConfirmSubmissionToApprovers, false);
+                    Set(varItemList, false);
+
+                    // Step 5: Notify user
+                    Notify("All items submitted!", NotificationType.Success)
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  Text: ="Submit"
+                  Visible: =varSelectedCase.Status = "Draft"
+                  X: =317
+                  Y: =298
+            - Add Item_6:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  Fill: =RGBA(106, 122, 127, 1)
+                  Font: =Font.'Open Sans'
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                  OnSelect: =Set(varConfirmSubmissionToApprovers, false)
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  Text: ="Cancel"
+                  Visible: =varSelectedCase.Status = "Draft"
+                  X: =616
+                  Y: =298
+      - Rectangle3_2:
+          Control: Rectangle@2.3.0
+          Group: GroupAreYouSureYouWantToExitDraft
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 0, 0, 0.65)
+            Height: =1080
+            Visible: =varConfirmDraft
+            Width: =1920
+      - Container5_1:
+          Control: GroupContainer@1.3.0
+          Variant: ManualLayout
+          Group: GroupAreYouSureYouWantToExitDraft
+          Properties:
+            BorderColor: =RGBA(214, 221, 224, 1)
+            BorderThickness: =2
+            DropShadow: =DropShadow.Regular
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =365
+            RadiusBottomLeft: =30
+            RadiusBottomRight: =30
+            RadiusTopLeft: =30
+            RadiusTopRight: =30
+            Visible: =varConfirmDraft
+            Width: =648
+            X: =636
+            Y: =343
+          Children:
+            - Rectangle7_1:
+                Control: Rectangle@2.3.0
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Fill: =RGBA(214, 221, 224, 1)
+                  Height: =3
+                  Width: =648
+                  Y: =104
+            - Label10_2:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =63
+                  Size: =16
+                  Text: ="Are you sure you want to Exit?"
+                  Width: =463
+                  X: =91
+                  Y: =30
+            - Label10_3:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =126
+                  Size: =15
+                  Text: ="Please make sure to save your list first before exiting or your items will not be saved"
+                  Width: =495
+                  X: =76
+                  Y: =130
+            - Confirm_1:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  Fill: =RGBA(215, 58, 60, 1)
+                  Font: =Font.'Open Sans'
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                  OnSelect: |
+                    =
+                        // Exit Logic: Clear asset list and reset inputs
+                    Clear(colAssetItems);
+                    Reset(DropdownItemAsset_1);
+                    Reset(DropdownModelAsset_1);
+                    Reset(DropdownManufacturerAsset_1);
+                    Reset(txtSerial_1);
+                    Reset(txtAssetTag_1);
+                    Reset(DropdownItemNonAsset_1);
+                    Reset(DropdownModelNonAsset_1);
+                    Reset(DropdownManufacturerNonAsset_1);
+                    Reset(txtQuantity_3);
+
+                    //Clear the temporary collection and selected item
+                    Clear(colNewItems);
+                    Clear(colDeletedItems);
+                    Set(
+                        varSelectedItem,
+                        Blank()
+                    );
+                    // Close popups regardless of path
+                    Set(
+                        varConfirmDraft,
+                        false
+                    );
+                    Set(
+                        varItemList,
+                        false
+                    );
+                    Set(
+                        varEditDraft,
+                        false
+                    );
+                    Set(
+                        varPopupAddWatchlist,
+                        false
+                    );
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  Text: ="Confirm"
+                  X: =135
+                  Y: =285
+            - Cancel_1:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  Fill: =RGBA(122, 138, 143, 1)
+                  Font: =Font.'Open Sans'
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                  OnSelect: =Set(varConfirmDraft,false)
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  Text: ="Cancel"
+                  X: =363
+                  Y: =285
+      - Label27:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Text: |+
+              =CountRows(
+                  Filter(
+                      'ITAssetDisposal-Case',
+                      RequestorEmail = User().Email ||
+                      !IsEmpty(
+                          Filter(
+                              'ITAssetDisposal-Watchlists',
+                              Value(caseID) = ID && WatchlistEmail = User().Email
+                          )
+                      )
+                  )
+              )
+            X: =793
+            Y: =154

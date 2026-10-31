@@ -1,0 +1,4 @@
+LocationID,Name,Country,1st Approver Name,1st Approver Email,2nd Approver Name,2nd Approver Email
+LOC001,East Coast Base,Malaysia,Aiman Rahman,it.manager.east@example.com,Siti Lim,finance.east@example.com
+LOC002,Island Base,Malaysia,Daniel Wong,it.manager.island@example.com,Siti Lim,finance.east@example.com
+LOC003,Northern Base,Brunei,Hafiz Omar,it.manager.north@example.com,Grace Tan,finance.north@example.com

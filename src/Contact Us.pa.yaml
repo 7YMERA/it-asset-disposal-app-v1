@@ -1,0 +1,215 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  Contact Us:
+    Properties:
+      LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
+      OnVisible: =Set(varSelectedMenu, "Contact Us")
+    Children:
+      - Container1_9:
+          Control: GroupContainer@1.3.0
+          Variant: AutoLayout
+          Properties:
+            Height: =1080
+            LayoutAlignItems: =LayoutAlignItems.Center
+            LayoutDirection: =LayoutDirection.Horizontal
+            Width: =1920
+          Children:
+            - NavRequestorView_3:
+                Control: CanvasComponent
+                ComponentName: NavRequestorView
+                Properties:
+                  Height: =App.DesignHeight
+                  NavigationItems: |-
+                    =With(
+                        {
+                            MenuItems: Table(
+                                {
+                                    MenuText: "View Request",
+                                    MenuIcon: "DocumentBulletList",
+                                    ScreenToGoTo: Requestor_ViewRequest
+                                },
+                                {
+                                    MenuText: "Add New",
+                                    MenuIcon: "Add",
+                                    ScreenToGoTo: Requestor_NewRequest_1
+                                },
+                                {
+                                    MenuText: "Contact Us",
+                                    MenuIcon: "Info",
+                                    ScreenToGoTo: 'Contact Us'
+                                },
+                                {
+                                    MenuText: "Logout",
+                                    MenuIcon: "ArrowExit",
+                                    ScreenToGoTo: 'Login'
+                                }
+                            )
+                        },
+                        MenuItems
+                    )
+                  UserRole: =varUserRole
+                  Width: =250
+            - Container1_3:
+                Control: GroupContainer@1.3.0
+                Variant: ManualLayout
+                Properties:
+                  DropShadow: =DropShadow.Regular
+                Children:
+                  - Container3_2:
+                      Control: GroupContainer@1.3.0
+                      Variant: ManualLayout
+                      Properties:
+                        Fill: =RGBA(0, 20, 220, 1)
+                        Height: =52
+                        RadiusBottomLeft: |
+                          =100
+                        RadiusBottomRight: |
+                          =100
+                        Width: =1454
+                        X: =108
+                      Children:
+                        - Label19_2:
+                            Control: Label@2.5.1
+                            Properties:
+                              Align: =Align.Center
+                              BorderColor: =RGBA(0, 18, 107, 1)
+                              Color: =RGBA(255, 255, 255, 1)
+                              Font: =Font.'Open Sans'
+                              FontWeight: =FontWeight.Bold
+                              Height: =52
+                              Size: =20
+                              Text: |-
+                                ="Contact Us
+                                "
+                              Width: =1454
+                  - ButtonSave_13:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        BorderColor: =ColorFade(Self.Fill, -15%)
+                        Color: =RGBA(255, 255, 255, 1)
+                        DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                        DisplayMode: |
+                          =If(
+                              IsBlank(TextInputContactUs),
+                              DisplayMode.Edit,
+                              DisplayMode.Disabled
+                          )
+                        Fill: =RGBA(0, 20, 220, 1)
+                        Font: =Font.'Open Sans'
+                        HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                        HoverColor: =RGBA(255, 255, 255, 1)
+                        HoverFill: |
+                          =ColorFade(Self.Fill, -0.2)
+                        OnSelect: |
+                          =// Step 1: Create new Case
+                          Set(
+                              varNewCase,
+                              Patch(
+                                  'ITAssetDisposal-Case',
+                                  Defaults('ITAssetDisposal-Case'),
+                                  {
+                                      LocationID: DropdownLocation.Selected.Value,
+                                      requestorName: varUserName,
+                                      RequestorEmail: varUserEmail,
+                                      Location: Label4_12.Text,
+                                      '1stApproverName': Label3.Text,
+                                      '1stApproverEmail': Label3_1.Text,
+                                      '2ndApproverName': Label3_4.Text,
+                                      '2ndApproverEmail': Label3_5.Text,
+                                      Status: "Draft",
+                                      Year: Year(Now()),
+                                      UID: Text(Now(), "yyyymmddhhmmssfff")
+                                  }
+                              )
+                          );
+
+                          // Step 2: Get ID of new case
+                          Set(
+                              varCaseID,
+                              varNewCase.ID
+                          );
+
+                          // Step 3: Submit colAssetItems to SharePoint and link to case
+                          ForAll(
+                              colAssetItems,
+                              Patch(
+                                  'ITAssetDisposal-Item',
+                                  Defaults('ITAssetDisposal-Item'),
+                                  {
+                                      caseNo: varCaseID,
+                                      assetType: ThisRecord.assetType,
+                                      Items: ThisRecord.item,
+                                      assetModel: ThisRecord.model,
+                                      assetBrand: ThisRecord.manufacturer,
+                                      SerialNum: ThisRecord.serial,
+                                      Quantity: If(
+                                          IsBlank(ThisRecord.quantity),
+                                          "-",
+                                          ThisRecord.quantity
+                                      ),
+                                      AssetTag: ThisRecord.tag,
+                                      UID: ThisRecord.uid
+                                  }
+                              )
+                          );
+
+                          // Step 4: Submit colCurrentCaseWatchlist to SharePoint
+                          ForAll(
+                              colCurrentCaseWatchlist,
+                              Patch(
+                                  'ITAssetDisposal-Watchlists',
+                                  Defaults('ITAssetDisposal-Watchlists'),
+                                  {
+                                      caseID: varCaseID,
+                                      WatchlistEmail: ThisRecord.WatchlistEmail,
+                                      WatchlistName: ThisRecord.WatchlistName,
+                                      UID: ThisRecord.UID
+                                  }
+                              )
+                          );
+
+                          // Step 5: Show success message
+                          Notify(
+                              "Case created and all items + watchlist submitted successfully!",
+                              NotificationType.Success
+                          );
+
+                          // Step 6: Clear collections
+                          Clear(colAssetItems);
+                          Clear(colCurrentCaseWatchlist);
+
+                          // Step 7: Set popups
+                          Set(varSaveCase, true);
+                          Set(varPopupAsset, false);
+                        PressedBorderColor: =Self.Fill
+                        PressedColor: =Self.Fill
+                        PressedFill: =Self.Color
+                        Text: ="Submit"
+                        X: =754
+                        Y: =888
+                  - TextInputContactUs:
+                      Control: TextInput@0.0.54
+                      Properties:
+                        Align: =Align.Left
+                        Appearance: ='TextInputCanvas.Appearance'.FilledDarker
+                        Height: =635
+                        Mode: ='TextInputCanvas.Mode'.Multiline
+                        TriggerOutput: ='TextInputCanvas.TriggerOutput'.Delayed
+                        Width: =1195
+                        X: =236
+                        Y: =210
+                  - Label26:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Text: ="Don hesitate to contact us on inquiring, bug reporting"
+                        X: =236
+                        Y: =111
