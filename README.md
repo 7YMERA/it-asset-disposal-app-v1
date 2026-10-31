@@ -54,7 +54,9 @@ My project was to put the whole process in one app.
 Before touching Power Apps, I drew the screens on paper and walked through them with the GoDigital
 developers. We kept the layout close to other internal SLB apps so staff would feel at home.
 
-![Early paper sketch of the Add and View Request screens](docs/images/early-sketch.webp)
+| First sketch of Add and View Request | Another page from the same notebook |
+|---|---|
+| ![Early paper sketch of the Add and View Request screens](docs/images/early-sketch.webp) | ![Second paper sketch](docs/images/paper-sketch-2.webp) |
 
 The first flowchart started in LucidChart and moved to draw.io. This is the first version I was happy
 with, the **MVP**. It has four lanes: the requestor, the system, an admin, and one "third party" approver,
@@ -175,13 +177,72 @@ Every case shows up as a card coloured by its status, so you can see where every
 | Approved | Requestor records the QUEST and IBase numbers, then disposes | Green |
 | Disposed | Nobody: the case is closed | Grey |
 
-### Approving
+### Following one case from start to finish
 
-Approvers get their own screen with their queue and two buttons, instead of an email thread.
+For my report I took one test case, **Case 59**, all the way through the app. These are the real screens.
 
-| Before: approvals in an email chain | After: an approver screen |
+**1. The requestor creates the case.** Pick a base, and the two approvers for that base fill in by
+themselves. Then add items: asset or non-asset, with dropdowns for the item, brand and model.
+
+| Pick a base; approvers appear | Add items to the list |
 |---|---|
-| ![Approval email chain, names blurred](docs/images/approve-v1.webp) | ![1st Approver screen](docs/images/approve-v2.webp) |
+| ![New case screen with base dropdown and approvers](docs/images/case-59/01-new-case-pick-base.webp) | ![Adding items with a delete confirmation](docs/images/case-59/02-add-items.webp) |
+
+| Leave half-way and it warns you | Saved: Case 59 is created |
+|---|---|
+| ![Exit warning popup](docs/images/case-59/03-exit-warning.webp) | ![Case 59 successfully created](docs/images/case-59/04-case-created.webp) |
+
+**2. It's a draft until it's submitted.** The case shows up in light blue on View Request, and the list
+can still be edited.
+
+| Case 59 as a draft | Editing the list |
+|---|---|
+| ![Case 59 in View Request](docs/images/case-59/05-case-in-view-request.webp) | ![Editing items in Case 59](docs/images/case-59/06-edit-items.webp) |
+
+| Submit, with a warning that the list locks | Now amber: Pending 1st Level Approval |
+|---|---|
+| ![Confirm submission popup](docs/images/case-59/07-confirm-submit.webp) | ![Case 59 pending 1st level approval](docs/images/case-59/08-pending-1st.webp) |
+
+**3. The IT Manager decides.** They only see cases waiting for them, with two buttons instead of an
+email thread.
+
+| Before: approvals in an email chain | After: the 1st Approver screen |
+|---|---|
+| ![Approval email chain, names blurred](docs/images/approve-v1.webp) | ![1st Approver screen for Case 59](docs/images/case-59/09-1st-approver.webp) |
+
+| Approving asks for confirmation | Case 59 moves to Pending 2nd Level |
+|---|---|
+| ![Approve confirmation](docs/images/case-59/10-approve-confirm.webp) | ![Case 59 pending 2nd level](docs/images/case-59/11-pending-2nd.webp) |
+
+**4. The Finance Controller gives the final approval.**
+
+| The 2nd Approver screen | Approved, shown in green |
+|---|---|
+| ![2nd Approver screen for Case 59](docs/images/case-59/12-2nd-approver.webp) | ![Approved cases list](docs/images/case-59/13-approved-list.webp) |
+
+![Case 59 showing who approved it](docs/images/case-59/14-approved-by.webp)
+
+*Each case shows who approved it, with their name and picture.*
+
+If either approver rejects, the case turns red and goes back to the requestor to fix and resubmit:
+
+![A rejected case in red, showing who rejected it](docs/images/rejected-case.webp)
+
+**5. The requestor records the paperwork and closes the case.** Once approved, two new buttons appear:
+*Add QUEST and IBase details* and *Item Disposed?*
+
+| QUEST and IBase buttons appear | Entering the QUEST number |
+|---|---|
+| ![Approved case with Add Quest and IBase button](docs/images/case-59/15-add-quest-ibase.webp) | ![Quest number popup](docs/images/case-59/16-quest-number.webp) |
+
+| "Are you sure you have disposed the items?" | Case 59: Disposed |
+|---|---|
+| ![Confirm disposed popup](docs/images/case-59/17-confirm-disposed.webp) | ![Case 59 shown as disposed](docs/images/case-59/18-disposed.webp) |
+
+Every step was saved to SharePoint as it happened. This is the QUEST Number list, filled in from the app
+during testing:
+
+![SharePoint Quest Number list](docs/images/sharepoint-quest-list.webp)
 
 ### Who sees what
 
@@ -199,9 +260,19 @@ Approvers get their own screen with their queue and two buttons, instead of an e
 - **Each approver sees only their own queue.**
 - **The watchlist** lets a requestor share a case with colleagues so they can act on it too.
 
+### Admin screens
+
+Admins manage bases and their approvers, admins and requestors from inside the app. (Colleagues' names
+and emails are blurred.)
+
+![Admin screen for setting locations and approvers](docs/images/admin-set-location.webp)
+
 ### Emails
 
-Power Automate flows watched the lists and emailed people at each step:
+Power Automate flows watched the lists and emailed people at each step. This is the *Case Creation
+Email* flow, with its run history from the last week of testing:
+
+![Power Automate Case Creation Email flow with run history](docs/images/power-automate-flow.webp)
 
 - **Case created:** the requestor and anyone on the watchlist
 - **Submitted:** the IT Manager
@@ -216,6 +287,10 @@ Power Automate flows watched the lists and emailed people at each step:
   just the current case's items into local collections and did the filtering there.
 - **Learning Power Fx from scratch.** It's formula-based, and most logic lives on button presses. Weekly
   check-ins with the GoDigital developers, and ChatGPT for debugging expressions, got me through.
+  This is what one button looked like: the Submit button updates the case status, refreshes the items
+  from SharePoint, rebuilds the list and closes the popup.
+
+  ![Power Fx code behind the Submit button](docs/images/submit-button-code.webp)
 - **Showing each person only their cases.** Requestors, approvers and watchlist members all see different
   slices of the same lists, so every gallery filters on the signed-in user's email.
 
