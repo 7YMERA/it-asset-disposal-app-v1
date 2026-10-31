@@ -9,6 +9,8 @@ Four roles came out of a design session with SLB's GoDigital team.
 | **Finance Controller** (2nd level approver) | Final approval before anything is disposed |
 | **Admin** | Manage locations and their approvers, admins and requestors |
 
+The full access-control chart is page 7 of the [original draw.io file](diagrams.md).
+
 ## How the app decides who you are
 
 - **Everyone is a requestor.** When the app starts, it reads your name and email from Microsoft 365 and

@@ -68,6 +68,7 @@ More detail:
 - [Roles and access](docs/roles-and-access.md)
 - [Key formulas](docs/key-formulas.md): the Power Fx behind login, saving a case and approvals
 - [Design and lessons learned](docs/design-and-lessons.md)
+- [Original draw.io charts](docs/diagrams.md): the full flow and access-control charts I designed in draw.io, all 9 pages
 - [Project timeline](docs/timeline.md): dated milestones from my SIP logbook
 - [What the live lists show](docs/live-data-review.md): how the final version was used, and its data problems
 
@@ -83,6 +84,7 @@ src/                    the app's screens and components as Power Apps YAML (.pa
   Contact Us.pa.yaml    support form
   Components/           the three navigation sidebars (requestor, approver, admin)
 docs/                   workflow, data model, roles, formulas, design notes and screenshots
+  diagrams/             the original draw.io file with the flow and access-control charts
 sample-data/            the SharePoint list structure as CSV, filled with made-up records
 ```
 

@@ -54,6 +54,8 @@ sequenceDiagram
     Note over R,App: A rejected case unlocks for editing and goes back to the IT Manager when resubmitted
 ```
 
+The original draw.io flowcharts, from the first draft to the final version, are in [diagrams.md](diagrams.md).
+
 ## Statuses
 
 | Status | Who acts next | Shown as |
