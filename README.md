@@ -21,7 +21,42 @@ The Kemaman base is also a warehouse for IT equipment, so a lot of hardware reac
 there. On 22 June 2025 I helped clear the IT store with the facility team. It took more than five trolleys
 to move everything out, some of it 10 to 12 years old.
 
-Every one of those items had to go through the disposal process, and that process looked like this:
+One batch alone was **54 laptops, 54 hard drives, 38 power adapters, 17 access points and 13 routers**,
+plus switches, desktops, cables and boxes of accessories. Every piece was carried, sorted, counted, logged and
+signed off by hand.
+
+### What "disposal" actually looked like
+
+| Out to the junkyard, box by box | Loading yet another trolley |
+|---|---|
+| ![Boxes of old IT equipment piled up at the junkyard](docs/images/disposal/01-junkyard.webp) | ![A trolley being loaded with boxes of old equipment](docs/images/disposal/02-trolley.webp) |
+
+| Carrying it out of the office | The storeroom we were clearing |
+|---|---|
+| ![Carrying boxes of old equipment out of the office](docs/images/disposal/03-carrying-boxes.webp) | ![Old desktops and boxes stacked in the IT storeroom](docs/images/disposal/04-storeroom.webp) |
+
+Before anything could leave, it had to be sorted by type and counted, because every count had to match the
+spreadsheet and the safety report.
+
+| Network switches | Ceiling access points | A box of tangled power adapters |
+|---|---|---|
+| ![Stack of old network switches](docs/images/disposal/05-switches.webp) | ![Stacks of old wireless access points](docs/images/disposal/06-access-points.webp) | ![Box of tangled power adapters](docs/images/disposal/07-power-adapters.webp) |
+
+Each device's asset tag was peeled off and stuck into a sheet, one by one, so it could be typed into Excel and
+matched against the register.
+
+![Peeled asset tags stuck onto a sheet](docs/images/disposal/08-asset-tags.webp)
+
+And no hard drive left the base in one piece. They were pulled out of every laptop and desktop, then smashed with a
+hammer, with a photo taken as proof of destruction.
+
+| Drives pulled from every machine | Smashed one at a time, with photo proof |
+|---|---|
+| ![Box of removed hard drives](docs/images/disposal/09-hard-drives.webp) | ![Hard drives being destroyed with a hammer](docs/images/disposal/10-smashing-drives.webp) |
+
+*Photos from my internship report. Faces are blurred.*
+
+That was the physical side. The paperwork was just as manual. Every one of those items had to go through the disposal process, and that process looked like this:
 
 1. **Log it in Excel.** Each laptop, desktop, cable lock and keyboard was typed into a spreadsheet by
    hand, with one tab per device type and more tabs for approval emails, the QUEST report and invoices.
