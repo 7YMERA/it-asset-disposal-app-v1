@@ -70,6 +70,66 @@ one is something the app allowed, so each one is fixed in the v2 design.
 - **No history.** Each case keeps only its current status. When and by whom it moved from one status to
   the next is only in SharePoint's version history, not in the app.
 
+## The supporting lists
+
+The case, item and location lists tell most of the story, but the end-of-internship export also has the
+smaller lists the app fed. These show how the closing steps and the side features were really used.
+
+| List | Rows | What it shows |
+|---|---|---|
+| QUEST Number | 6 | Safety report numbers, on 6 cases |
+| IBase Number | 5 | Manpower request numbers, on 4 cases |
+| Watchlists | 13 | 9 cases shared, 22 July to 5 August |
+| Contact Support Info | 9 | 4 inquiries, 2 bug reports, 3 "others" |
+| IT Asset Lists | 482 | The device catalogue behind the dropdowns |
+| Admins | 4 | Including a shared team mailbox |
+| Requestor | 3 | Everyone who opened the app, recorded at login |
+
+### Closing a case didn't check the paperwork
+
+The process says nothing leaves the base until a QUEST safety report and IBase manpower requests are
+raised. The app recorded both, but didn't require them before *Item Disposed?*:
+
+| Disposed cases | Count |
+|---|---|
+| With both QUEST and IBase numbers | 3 |
+| With only one of them | 3 |
+| With neither | 2 |
+
+So 5 of the 8 disposed cases were closed with paperwork missing. In testing that's harmless, but in real use
+it's the gap an auditor would find first. The fix is simple: disable *Item Disposed?* until both numbers
+exist.
+
+### One case, several IBase requests
+
+One case carries two IBase numbers. That matches the manual process: one manpower request to carry the
+items to the junkyard and another to destroy the hard drives. Keeping IBase in its own list, rather than as
+a column on the case, was the right call, because it lets a case hold as many requests as it needs.
+
+### No format checks on reference numbers
+
+QUEST numbers range from 10 to 14 digits, and one is the text `jajajajaja`. IBase numbers range from 7 to 13
+digits, one with a leading zero. Both are stored as text with no pattern check, so any typo is accepted.
+
+### The watchlist was used, mostly for testing
+
+13 watchlist entries cover 9 cases. Three different people were added, but 9 of the 13 entries are the
+builder adding himself while testing. The feature works, but there isn't enough real use to say whether
+teams wanted it.
+
+### Contact Us got real requests
+
+Most of the 9 messages are test text, but two are genuine requests to add a new base. That fits the design:
+requestors can't add bases themselves, so Contact Us is how a missing location reaches an admin.
+
+### The catalogue came from the asset register
+
+The IT Asset Lists catalogue has 482 models across 13 item types: 430 assets and 52 non-assets. Laptops
+(219) and desktops (197) make up most of it, and Dell alone accounts for about 60%. It looks imported
+from the wider asset register rather than built for disposal. It includes server and industrial brands
+(Supermicro, Rockwell, VMware), and the manufacturer column has `DELL` and `Dell`, plus `Unknown`, `CLONE`
+and `-`. A disposal-only catalogue would be shorter and easier to pick from.
+
 ## How v2 answers these
 
 [it-asset-disposal-app-v2](https://github.com/7YMERA/it-asset-disposal-app-v2) is the redesign. Its data

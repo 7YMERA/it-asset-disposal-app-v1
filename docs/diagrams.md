@@ -43,6 +43,13 @@ Page 8 became the [data model](data-model.md). Pages 7 and 9 became the [workflo
 These images were rendered from the draw.io file for this repo; open the file itself for the exact
 original layout.
 
-Two ideas in the charts never made it into the app: looking up asset details automatically from the
-internal asset system by scanning a barcode, and updating the asset's status in the hardware ESM after
-disposal. Both needed access to SLB systems outside the project's scope, so items were typed in by hand.
+Two ideas in the charts needed access to SLB systems outside the project's scope, so neither was built
+as drawn:
+
+- **Barcode lookup.** Looking up asset details automatically from the internal asset system by scanning
+  a barcode. Items were typed in by hand instead.
+- **Updating ESM.** Updating the asset's status in the hardware ESM after disposal. The final version
+  does this by hand instead. When a requestor adds items to a case, the *Save* button stays disabled until
+  they tick **Updated to ESM**, which reminds them to update the asset record themselves. The step is a
+  manual check rather than an integration, but it means no case can be saved while it skips the register
+  (from the August 2025 user guide).
